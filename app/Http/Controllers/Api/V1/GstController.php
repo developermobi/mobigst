@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Dingo\Api\Routing\Helpers;
 use App\Http\Controllers\Controller;
+use League\Csv\Reader;
+use File;
 use App\Gst;
 use Session;
 use View;
@@ -255,9 +257,9 @@ class GstController extends Controller{
 
 
 	public function getBusinessData($id){
-        $getData = Gst::getBusinessData($id);
+		$getData = Gst::getBusinessData($id);
 
-       if (sizeof($getData) > 0) {
+		if (sizeof($getData) > 0) {
 			$returnResponse['status'] = "success";
 			$returnResponse['code'] = "200";
 			$returnResponse['message'] = "Data found.";
@@ -268,17 +270,17 @@ class GstController extends Controller{
 			$returnResponse['message'] = "No data found.";
 			$returnResponse['data'] = $getData;
 		}
-        return response()->json($returnResponse);
-    }
+		return response()->json($returnResponse);
+	}
 
 
 
 	public function updateBusiness(Request $requestData,$id){
-        $input = $requestData->all();
-        
-        $updateBusiness = Gst::updateBusiness($input,$id);
+		$input = $requestData->all();
 
-        if($updateBusiness > 0){
+		$updateBusiness = Gst::updateBusiness($input,$id);
+
+		if($updateBusiness > 0){
 			$returnResponse['status'] = "success";
 			$returnResponse['code'] = "200";
 			$returnResponse['message'] = "Business details updated successfully.";
@@ -290,14 +292,14 @@ class GstController extends Controller{
 			$returnResponse['data'] = $updateBusiness;
 		}
 		return response()->json($returnResponse);
-    }
+	}
 
 
 
-    public function deleteBusiness($id){
-        $getData = Gst::deleteBusiness($id);
+	public function deleteBusiness($id){
+		$getData = Gst::deleteBusiness($id);
 
-       if (sizeof($getData) > 0) {
+		if (sizeof($getData) > 0) {
 			$returnResponse['status'] = "success";
 			$returnResponse['code'] = "200";
 			$returnResponse['message'] = "Business deleted successfully.";
@@ -308,16 +310,16 @@ class GstController extends Controller{
 			$returnResponse['message'] = "Something went wrong while deleting business.";
 			$returnResponse['data'] = $getData;
 		}
-        return response()->json($returnResponse);
-    }
+		return response()->json($returnResponse);
+	}
 
 
 
-    public function getBusinessGstin($id){
-    	$business_id = decrypt($id);
-        $getData = Gst::gstin($business_id);
+	public function getBusinessGstin($id){
+		$business_id = decrypt($id);
+		$getData = Gst::gstin($business_id);
 
-       if (sizeof($getData) > 0) {
+		if (sizeof($getData) > 0) {
 			$returnResponse['status'] = "success";
 			$returnResponse['code'] = "200";
 			$returnResponse['message'] = "Data found.";
@@ -328,15 +330,15 @@ class GstController extends Controller{
 			$returnResponse['message'] = "No data found.";
 			$returnResponse['data'] = $getData;
 		}
-        return view('gst.gstin')->with('data', $returnResponse);
-    }
+		return view('gst.gstin')->with('data', $returnResponse);
+	}
 
 
 
-    public function getGstinData($id){
-        $getData = Gst::getGstinData($id);
+	public function getGstinData($id){
+		$getData = Gst::getGstinData($id);
 
-       if (sizeof($getData) > 0) {
+		if (sizeof($getData) > 0) {
 			$returnResponse['status'] = "success";
 			$returnResponse['code'] = "200";
 			$returnResponse['message'] = "Data found.";
@@ -347,17 +349,17 @@ class GstController extends Controller{
 			$returnResponse['message'] = "No data found.";
 			$returnResponse['data'] = $getData;
 		}
-        return response()->json($returnResponse);
-    }
+		return response()->json($returnResponse);
+	}
 
 
 
 	public function updateGstin(Request $requestData,$id){
-        $input = $requestData->all();
-        
-        $updateGstin = Gst::updateGstin($input,$id);
+		$input = $requestData->all();
 
-        if($updateGstin > 0){
+		$updateGstin = Gst::updateGstin($input,$id);
+
+		if($updateGstin > 0){
 			$returnResponse['status'] = "success";
 			$returnResponse['code'] = "200";
 			$returnResponse['message'] = "GSTIN details updated successfully.";
@@ -369,14 +371,14 @@ class GstController extends Controller{
 			$returnResponse['data'] = $updateGstin;
 		}
 		return response()->json($returnResponse);
-    }
+	}
 
 
 
-    public function deleteGstin($id){
-        $getData = Gst::deleteGstin($id);
+	public function deleteGstin($id){
+		$getData = Gst::deleteGstin($id);
 
-       if (sizeof($getData) > 0) {
+		if (sizeof($getData) > 0) {
 			$returnResponse['status'] = "success";
 			$returnResponse['code'] = "200";
 			$returnResponse['message'] = "GSTIN deleted successfully.";
@@ -387,8 +389,385 @@ class GstController extends Controller{
 			$returnResponse['message'] = "Something went wrong while deleting GSTIN.";
 			$returnResponse['data'] = $getData;
 		}
-        return response()->json($returnResponse);
-    }
+		return response()->json($returnResponse);
+	}
+
+
+
+	public function getBusiness(Request $request){
+		$user_id = $request->cookie('tokenId');
+
+		$business =  Gst::business($user_id);
+
+		if (sizeof($business) > 0) {
+			$data['status'] = "success";
+			$data['code'] = "200";
+			$data['message'] = "Data found.";
+			$data['data'] = $business;
+		}else{
+			$data['status'] = "success";
+			$data['code'] = "204";
+			$data['message'] = "No data found.";
+			$data['data'] = '';
+		}
+		
+		return response()->json($data);
+	}
+
+
+
+	public function importContactFile(Request $request){	
+
+		$input = $request->all();
+		if(isset($input['contact_csv'])){
+
+			$file1 = $input['contact_csv'];
+			
+			$file_name1 = basename($file1->getClientOriginalName(), '.'.$file1->getClientOriginalExtension());
+			$fileName1 = $file_name1.time().'.'.$file1->getClientOriginalExtension();
+			$fileName1 = str_replace(' ', '', $fileName1);
+			$fileName1 = preg_replace('/\s+/', '', $fileName1);
+			$file_upload1 = $file1->move(
+				base_path() . '/public/Contact/', $fileName1
+				);
+			$fileName['contact_csv'] = $file1;
+			$input['contact_csv']=$file1;
+		}
+		$full_url = base_path() . '/public/Contact/'.$fileName1;
+		$csv = Reader::createFromPath($full_url);
+
+		$headers = $csv->fetchOne();
+
+		$res = $csv->setOffset(1)->fetchAll();
+		$key_value=array();
+		$group_id = 1;
+		$user_id = 2;
+		foreach($res as $key => $val){
+			$key_value[$key]['unique_id'] = $res[$key][0];
+			$key_value[$key]['contact_type'] = $res[$key][1];
+			$key_value[$key]['business_name'] = $res[$key][2];
+			$key_value[$key]['gstin_no'] = $res[$key][3];
+			$key_value[$key]['contact_person'] = $res[$key][4];
+			$key_value[$key]['email'] = $res[$key][5];
+			$key_value[$key]['pan_no'] = $res[$key][6];
+			$key_value[$key]['phone_no'] = $res[$key][7];
+			$key_value[$key]['alternate_no'] = $res[$key][8];
+			$key_value[$key]['address'] = $res[$key][9];
+			$key_value[$key]['city'] = $res[$key][10];
+			$key_value[$key]['state'] = $res[$key][11];
+			$key_value[$key]['pincode'] = $res[$key][12];
+			$key_value[$key]['created_at'] = date('Y-m-d H:i:s');
+		}
+		$key_value;
+		$start_time = date("h:i:sa");
+
+		$collection = collect($key_value); 
+		$infoFileInsertedData = Gst::addContactFromCSV($collection->toArray());  
+		
+		if($infoFileInsertedData){
+			$response['status'] = "success";
+			$response['code'] = 200;
+			$response['message'] = "OK";
+			$response['data'] = $infoFileInsertedData;
+			$response['strat_time'] = $start_time;
+			$response['end_time'] = date("h:i:sa");
+			unlink($full_url);
+		}else{
+			$response['status'] = "fail";
+			$response['code'] = 400;
+			$response['message'] = "Bad Request";
+			$response['data'] = $infoFileInsertedData;
+			unlink($full_url);
+		}
+		return view('gst.importitem')->with('data', $response);
+	}
+
+
+
+	public function addCustomer(Request $request){
+		$input = $request->all();
+
+		//$addCustomer = Gst::addCustomer($input);
+		//return $input['email'];
+		//if($addCustomer > 0){
+
+			if($input['email'] != ''){
+				$mailInfo = array();
+				/*$mailInfo['email'] = $email;
+				$mailInfo['name'] = $name;
+				$mailInfo['show_name'] = $showDetail[0]->name;*/
+
+				$res = Mail::send('gst.gstinMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
+
+					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
+					$message->to($mailInfo['email'])->subject('MobiGST Customer Mail');
+					$message->cc('prajwalweb@gmail.com');
+				});
+			}
+
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "201";
+			$returnResponse['message'] = "Customer added Sucessfully.";
+			$returnResponse['data'] = $addCustomer;
+		/*}else{
+			$returnResponse['status'] = "failed";
+			$returnResponse['code'] = "302";
+			$returnResponse['message'] = "Error while adding customer. Please try again.";
+			$returnResponse['data'] = $addCustomer;
+		}
+		return response()->json($returnResponse);*/
+	}
+
+
+
+	public function contacts($id){
+		$id = decrypt($id);
+		$contacts =  Gst::contacts($id);
+
+		if (sizeof($contacts) > 0) {
+			$data['status'] = "success";
+			$data['code'] = "200";
+			$data['message'] = "Data found.";
+			$data['data'] = $contacts;
+		}else{
+			$data['status'] = "success";
+			$data['code'] = "204";
+			$data['message'] = "No data found.";
+			$data['data'] = '';
+		}
+		
+		return view('gst.contacts')->with('data', $data);
+	}
+
+
+
+	public function editContact($id){
+		$item = decrypt($id);
+		$getData = Gst::getContactData($item);
+
+		if (sizeof($getData) > 0) {
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "200";
+			$returnResponse['message'] = "Data found.";
+			$returnResponse['data'] = $getData;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "No data found.";
+			$returnResponse['data'] = $getData;
+		}
+		return view('gst.editCustomer')->with('data', $returnResponse);
+	}
+
+
+
+	public function updateContact(Request $request, $id){
+		$input = $request->all();
+
+		$updateContact = Gst::updateContact($input,$id);
+
+		if($updateContact > 0){
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "201";
+			$returnResponse['message'] = "Contact updated successfully.";
+			$returnResponse['data'] = $updateContact;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "Not updated.";
+			$returnResponse['data'] = $updateContact;
+		}
+		return response()->json($returnResponse);
+	}
+
+
+
+	public function deleteContact($id){
+		$getData = Gst::deleteContact($id);
+
+		if (sizeof($getData) > 0) {
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "200";
+			$returnResponse['message'] = "Contact deleted successfully.";
+			$returnResponse['data'] = $getData;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "Something went wrong while deleting contact.";
+			$returnResponse['data'] = $getData;
+		}
+		return response()->json($returnResponse);
+	}
+
+
+
+	public function importItemFile(Request $request){	
+
+		$input = $request->all();
+		if(isset($input['item_csv'])){
+
+			$file1 = $input['item_csv'];
+			
+			$file_name1 = basename($file1->getClientOriginalName(), '.'.$file1->getClientOriginalExtension());
+			$fileName1 = $file_name1.time().'.'.$file1->getClientOriginalExtension();
+			$fileName1 = str_replace(' ', '', $fileName1);
+			$fileName1 = preg_replace('/\s+/', '', $fileName1);
+			$file_upload1 = $file1->move(
+				base_path() . '/public/Contact/', $fileName1
+				);
+			$fileName['item_csv'] = $file1;
+			$input['item_csv']=$file1;
+		}
+		$full_url = base_path() . '/public/Contact/'.$fileName1;
+		$csv = Reader::createFromPath($full_url);
+
+		$headers = $csv->fetchOne();
+
+		$res = $csv->setOffset(1)->fetchAll();
+		$key_value=array();
+		$group_id = 1;
+		$user_id = 2;
+		foreach($res as $key => $val){
+			$key_value[$key]['business_id'] = $input['business_id'];
+			$key_value[$key]['item_sku'] = $res[$key][0];
+			$key_value[$key]['item_type'] = $res[$key][1];
+			$key_value[$key]['item_hsn_sac'] = $res[$key][2];
+			$key_value[$key]['item_description'] = $res[$key][3];
+			$key_value[$key]['item_unit'] = $res[$key][4];
+			$key_value[$key]['item_sale_price'] = $res[$key][5];
+			$key_value[$key]['item_purchase_price'] = $res[$key][6];
+			$key_value[$key]['item_discount'] = $res[$key][7];
+			$key_value[$key]['item_notes'] = $res[$key][8];
+			$key_value[$key]['created_at'] = date('Y-m-d H:i:s');
+		}
+		$key_value;
+		$start_time = date("h:i:sa");
+
+		$collection = collect($key_value); 
+		$infoFileInsertedData = Gst::addItemFromCSV($collection->toArray());  
+		
+		if($infoFileInsertedData){
+			$response['numbers'] = sizeof($collection);
+			$response['status'] = "success";
+			$response['code'] = 200;
+			$response['message'] = "OK";
+			$response['data'] = $infoFileInsertedData;
+			$response['strat_time'] = $start_time;
+			$response['end_time'] = date("h:i:sa");
+			unlink($full_url);
+		}else{
+			$response['numbers'] = sizeof($collection);
+			$response['status'] = "fail";
+			$response['code'] = 400;
+			$response['message'] = "Bad Request";
+			$response['data'] = $infoFileInsertedData;
+			unlink($full_url);
+		}
+		return view('gst.importmsg')->with('data', $response);
+	}
+
+
+
+	public function addItem(Request $request){
+		$input = $request->all();
+
+		$addItem = Gst::addItem($input);
+
+		if($addItem > 0){
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "201";
+			$returnResponse['message'] = "Item added Sucessfully.";
+			$returnResponse['data'] = $addItem;
+		}else{
+			$returnResponse['status'] = "failed";
+			$returnResponse['code'] = "302";
+			$returnResponse['message'] = "Error while adding item. Please try again.";
+			$returnResponse['data'] = $addItem;
+		}
+		
+		return response()->json($returnResponse);
+	}
+
+
+
+	/*public function items($id){
+
+		$items =  Gst::items($id);
+
+		if (sizeof($items) > 0) {
+			$data['status'] = "success";
+			$data['code'] = "200";
+			$data['message'] = "Data found.";
+			$data['data'] = $items;
+		}else{
+			$data['status'] = "success";
+			$data['code'] = "204";
+			$data['message'] = "No data found.";
+			$data['data'] = '';
+		}
+		
+		return view('gst.items')->with('data', $data);
+	}*/
+
+
+
+	public function editItem($id){
+		$item = decrypt($id);
+		$getData = Gst::getItemData($item);
+
+		if (sizeof($getData) > 0) {
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "200";
+			$returnResponse['message'] = "Data found.";
+			$returnResponse['data'] = $getData;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "No data found.";
+			$returnResponse['data'] = $getData;
+		}
+		return view('gst.editItem')->with('data', $returnResponse);
+	}
+
+
+
+	public function updateItem(Request $request, $id){
+		$input = $request->all();
+
+		$updateItem = Gst::updateItem($input,$id);
+
+		if($updateItem > 0){
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "201";
+			$returnResponse['message'] = "Item updated successfully.";
+			$returnResponse['data'] = $updateItem;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "Not updated.";
+			$returnResponse['data'] = $updateItem;
+		}
+		return response()->json($returnResponse);
+	}
+
+
+
+	public function deleteItem($id){
+		$getData = Gst::deleteItem($id);
+
+		if (sizeof($getData) > 0) {
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "200";
+			$returnResponse['message'] = "Item deleted successfully.";
+			$returnResponse['data'] = $getData;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "Something went wrong while deleting item.";
+			$returnResponse['data'] = $getData;
+		}
+		return response()->json($returnResponse);
+	}
 
 
 }

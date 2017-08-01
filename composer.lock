@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f5d8594c67f675bbef7b4b332ed7337f",
-    "content-hash": "c3700e999c582ce2645a2443c12a8956",
+    "hash": "eb6218919a3cc55d64a66d599c5bb701",
+    "content-hash": "ae5f37652073b7055d9adbfbe22d676b",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1062,6 +1062,63 @@
             "time": "2017-05-21 18:02:21"
         },
         {
+            "name": "league/csv",
+            "version": "8.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/csv.git",
+                "reference": "0a1b535df48507f58ed3c7ab44e72272b11163ac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/csv/zipball/0a1b535df48507f58ed3c7ab44e72272b11163ac",
+                "reference": "0a1b535df48507f58ed3c7ab44e72272b11163ac",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "^1.9",
+                "phpunit/phpunit": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "8.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\Csv\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ignace Nyamagana Butera",
+                    "email": "nyamsprod@gmail.com",
+                    "homepage": "https://github.com/nyamsprod/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Csv data manipulation made easy in PHP",
+            "homepage": "http://csv.thephpleague.com",
+            "keywords": [
+                "csv",
+                "export",
+                "filter",
+                "import",
+                "read",
+                "write"
+            ],
+            "time": "2015-12-11 09:28:14"
+        },
+        {
             "name": "league/flysystem",
             "version": "1.0.40",
             "source": {
@@ -1210,16 +1267,16 @@
         },
         {
             "name": "maatwebsite/excel",
-            "version": "2.1.19",
+            "version": "2.1.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Maatwebsite/Laravel-Excel.git",
-                "reference": "f4535ac21968f6086438e098cdf289b350aa993c"
+                "reference": "a8baf7de1030d261318f90fa5c273a47ef616b59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/f4535ac21968f6086438e098cdf289b350aa993c",
-                "reference": "f4535ac21968f6086438e098cdf289b350aa993c",
+                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/a8baf7de1030d261318f90fa5c273a47ef616b59",
+                "reference": "a8baf7de1030d261318f90fa5c273a47ef616b59",
                 "shasum": ""
             },
             "require": {
@@ -1235,7 +1292,7 @@
             },
             "require-dev": {
                 "mockery/mockery": "~0.9",
-                "orchestra/testbench": "3.1.*",
+                "orchestra/testbench": "3.1.*|3.2.*|3.3.*|3.4.*|3.5.*",
                 "phpseclib/phpseclib": "~1.0",
                 "phpunit/phpunit": "~4.0"
             },
@@ -1284,7 +1341,7 @@
                 "import",
                 "laravel"
             ],
-            "time": "2017-07-02 07:00:56"
+            "time": "2017-07-26 18:04:04"
         },
         {
             "name": "maximebf/debugbar",

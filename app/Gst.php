@@ -210,6 +210,134 @@ class Gst extends Model{
 
 
 
+	public static function addContactFromCSV($data){
+        $insertedData = DB::table('contact')->insert($data);
+		return $insertedData;
+	}
+
+
+
+	public static function addCustomer($input){
+		$input['created_at'] = date('Y-m-d H:i:s');
+
+		$addCustomer = DB::table('contact')
+		->insert($input);
+
+		return $addCustomer;
+	}
+
+
+
+	public static function contacts($id){
+
+		$getData = DB::table('contact')
+		->where('business_id',$id)
+		->where('status',1)
+		->paginate(10);
+
+		return $getData;
+	}
+
+
+
+	public static function getContactData($contact_id){
+
+		$getData = DB::table('contact')
+		->where('contact_id',$contact_id)
+		->where('status',1)
+		->get();
+
+		return $getData;
+	}
+
+
+
+	public static function deleteContact($contact_id){
+
+		$data['status'] = '0';
+		$updateData = DB::table('contact')
+		->where('contact_id', $contact_id)
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
+	public static function updateContact($data,$id){
+		
+		$updateData = DB::table('contact')
+		->where('contact_id', $id)
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
+	public static function addItemFromCSV($data){
+        $insertedData = DB::table('item')->insert($data);
+		return $insertedData;
+	}
+
+
+
+	public static function addItem($input){
+		$input['created_at'] = date('Y-m-d H:i:s');
+
+		$addItem = DB::table('item')
+		->insert($input);
+
+		return $addItem;
+	}
+
+
+
+	public static function items($id){
+
+		$getData = DB::table('item')
+		->where('business_id',$id)
+		->where('status',1)
+		->paginate(10);
+
+		return $getData;
+	}
+
+
+
+	public static function getItemData($item_id){
+
+		$getData = DB::table('item')
+		->where('item_id',$item_id)
+		->where('status',1)
+		->get();
+
+		return $getData;
+	}
+
+
+
+	public static function deleteItem($item_id){
+
+		$data['status'] = '0';
+		$updateData = DB::table('item')
+		->where('item_id', $item_id)
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
+	public static function updateItem($data,$id){
+
+		$updateData = DB::table('item')
+		->where('item_id', $id)
+		->update($data);
+
+		return  $updateData;
+	}
+
 
 
 

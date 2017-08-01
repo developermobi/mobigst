@@ -55,7 +55,7 @@
 								</div>
 								<div class="col-md-5" style="padding: 30px; float: right;">
 									<button class="btn btn-success business_id"  data-toggle="modal" data-target="#addGstinModal" data-id='{{$value->business_id}}'>Add GSTIN No.</button>
-									<a href="collectionsummery/{{$value->business_id}}">
+									<a href="contacts/{{encrypt($value->business_id)}}">
 										<button class="btn btn-warning" style="padding-left: 5px;">GSTIN Collection Summery</button>
 									</a>
 								</div>

@@ -15,6 +15,7 @@
         "guzzlehttp/guzzle": "^5.2",
         "roumen/sitemap": "2.5.3",
         "maatwebsite/excel": "^2.1",
+        "league/csv": "8.0",
         "swiftmailer/swiftmailer": ">=4.2.0,~5.0"
     },
     "require-dev": {

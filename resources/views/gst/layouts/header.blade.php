@@ -1,3 +1,9 @@
+<script type="text/javascript">
+	$(function(){
+		$('#user_mail').text($.cookie('userTokenEmail'));
+	});
+</script>
+
 <nav class="navbar navbar-default navbar-fixed-top">
 	<div class="container">
 		<div class="navbar-header wow fadeInLeft animated animated" data-wow-delay="0.4s">
@@ -18,7 +24,7 @@
 				</li>
 				<li id="welcome_user_li" style="display: none;">
 					<button class="btn btn-danger btn-block dropdown-toggle" type="button" data-toggle="dropdown">
-						Welcome Prajwal <span class="caret"></span>
+						<span id="user_mail"></span> <span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu">
 						<li><a href="javascript:void();" onclick="logout();"><span>Logout</span></a></li>

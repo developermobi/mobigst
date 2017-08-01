@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Input;
+use App\Gst;
+
 $api = app('Dingo\Api\Routing\Router');
 
 /*
@@ -33,10 +36,6 @@ Route::get('/welcome', function () {
 	return view('gst.welcome');
 });
 
-/*Route::get('/business', function () {
-	return view('gst.business');
-});*/
-
 Route::get('/importcontact', function () {
 	return view('gst.importcontact');
 });
@@ -55,6 +54,40 @@ Route::get('setting', [
 
 Route::get('gstn/{id}', [
 	'as' => 'gstn/{id}', 'uses' => 'Api\V1\GstController@getBusinessGstin'
+	]);
+
+Route::get('/addCustomer', function () {
+	return view('gst.addCustomer');
+});
+
+Route::get('/addItem', function () {
+	return view('gst.addItem');
+});
+
+Route::post('importContactFile', [
+	'as' => 'gst.importContactFile', 'uses' => 'Api\V1\GstController@importContactFile'
+	]);
+
+Route::post('importItemFile', [
+	'as' => 'gst.importItemFile', 'uses' => 'Api\V1\GstController@importItemFile'
+	]);
+
+Route::post ( '/items', function () {
+	$business_id = Input::get ('business_id');
+	$data = Gst::items($business_id);
+	return view('gst.items',['data'=>$data]);
+} );
+
+Route::get('editItem/{id}', [
+	'as' => 'editItem/{id}', 'uses' => 'Api\V1\GstController@editItem'
+	]);
+
+Route::get('contacts/{id}', [
+	'as' => 'gst.contacts/{id}', 'uses' => 'Api\V1\GstController@contacts'
+	]);
+
+Route::get('editCustomer/{id}', [
+	'as' => 'editCustomer/{id}', 'uses' => 'Api\V1\GstController@editContact'
 	]);
 
 $api->version('v1', function ($api) {
@@ -112,6 +145,36 @@ $api->version('v1', function ($api) {
 $api->version('v1', function ($api) {
 	$api->post('deleteGstin/{id}', 'App\Http\Controllers\Api\V1\GstController@deleteGstin');
 });
+
+$api->version('v1', function ($api) {
+	$api->post('getBusiness', 'App\Http\Controllers\Api\V1\GstController@getBusiness');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('addCustomer', 'App\Http\Controllers\Api\V1\GstController@addCustomer');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('deleteContact/{id}', 'App\Http\Controllers\Api\V1\GstController@deleteContact');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('updateContact/{id}', 'App\Http\Controllers\Api\V1\GstController@updateContact');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('addItem', 'App\Http\Controllers\Api\V1\GstController@addItem');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('deleteItem/{id}', 'App\Http\Controllers\Api\V1\GstController@deleteItem');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('updateItem/{id}', 'App\Http\Controllers\Api\V1\GstController@updateItem');
+});
+
+
 
 
 
