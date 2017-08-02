@@ -14,6 +14,14 @@ $(function(){
 		login();
 	});
 
+	$('#forgotButton').click(function(){
+		forgotpassword();
+	});
+
+	$('#resetButton').click(function(){
+		updatepassword();
+	});
+
 	//REGISTRATION VALIDATION     
 	$("#signupForm").validate({
 		rules: {    
@@ -56,6 +64,37 @@ $(function(){
     		},
     	}
     });
+
+    //FORGOT PASSWORD VALIDATION     
+    $("#forgotForm").validate({
+    	rules: {    
+    		email: {
+    			required: true,
+    			email: true
+    		},
+    	},
+    	messages: {    
+    		email: {
+    			required: "Please enter a valid email address",
+    		},
+    	}
+    });
+
+    //RESET PASSWORD VALIDATION     
+	$("#resetForm").validate({
+		rules: {    
+			password:{
+				required: true,
+			},
+			confirm_password:{
+				required: true,
+			},
+		},
+		messages: {    
+			password:"Please enter password.",
+			confirm_password:"Please enter confirm password.",
+		}
+	});
 
 });
 
@@ -200,6 +239,128 @@ function login(){
 		},
 		complete:function(){
 			$("#loginButton").prop('disabled', false).text('Login');
+		}
+	});
+}
+
+
+
+function forgotpassword(){
+
+	var flag = true;
+	flag = $("#forgotForm").valid();
+	if(flag==false){
+		return false;
+	}
+
+	var data = JSON.stringify($("#forgotForm").serializeFormJSON());
+
+	$.ajax({
+		"async": true,
+		"crossDomain": true,
+		"url": SERVER_NAME+"/api/forgotpassword",
+		type:"POST",
+
+		"headers": {
+			"content-type": "application/json",
+			"cache-control": "no-cache",
+			"postman-token": "5d6d42d9-9cdb-e834-6366-d217b8e77f59"
+		},
+		"processData": false,
+		"data":data,
+		"dataType":"JSON",
+		beforeSend:function(){
+			$("#forgotButton").prop('disabled', true).text('Please Wait...');
+		},
+		success:function(response){
+			
+			if(response.code == 200){
+				swal({
+					text: response.message,
+					type: "success",
+					confirmButtonText: "OK",
+					width:'400px',
+				}).then(function () {
+					window.location.href = "/login";
+					$('#loginForm')[0].reset();
+				});
+			}else{
+				swal({
+					title: "Failed!",
+					text: response.message,
+					type: "error",
+					confirmButtonText: "Close",
+				});
+			}
+		},
+		complete:function(){
+			$("#forgotButton").prop('disabled', false).text('Submit');
+		}
+	});
+}
+
+
+
+function updatepassword(){
+
+	var flag = true;
+	flag = $("#resetForm").valid();
+	if(flag==false){
+		return false;
+	}
+
+	var password = $('#password').val();
+	var confirm_password = $('#confirm_password').val();
+
+	if(password != confirm_password){
+		swal({
+			text : 'Password and confirm password should be same.',
+			type : 'warning'
+		});
+		return false;
+	}
+
+	var data = JSON.stringify($("#resetForm").serializeFormJSON());
+	var user_id = $("#user_id").val();
+
+	$.ajax({
+		"async": true,
+		"crossDomain": true,
+		"url": SERVER_NAME+"/api/updatepassword/"+user_id,
+		type:"POST",
+		"headers": {
+			"content-type": "application/json",
+			"cache-control": "no-cache",
+			"postman-token": "5d6d42d9-9cdb-e834-6366-d217b8e77f59"
+		},
+		"processData": false,
+		"data":data,
+		"dataType":"JSON",
+		beforeSend:function(){
+			$("#updateCustomer").prop('disabled', true).text('Updating, Please Wait...');
+		},
+		success:function(response){
+			if(response.code == 201){
+				swal({
+					title: "Success !",
+					text: response.message,
+					type: "success",
+					confirmButtonText: "OK",
+					width:'400px',
+				}).then(function () {
+					window.location.href = SERVER_NAME+"/login";
+				});
+			}else{
+				swal({
+					title: "Failed!",
+					text: response.message,
+					type: "error",
+					confirmButtonText: "Close",
+				});
+			}
+		},
+		complete:function(){
+			$("#updateCustomer").prop('disabled', false).text('Update');
 		}
 	});
 }

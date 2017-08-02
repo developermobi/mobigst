@@ -61,12 +61,11 @@
 			<a href="javascript:void();"><button class="btn btn-danger btn-block" type="button">
 				LOGIN VIA GOOGLE</button></a>
 				<center><p>OR</p></center>
-				<h4>Login with your email address</h4>
-				<form id="loginForm" role="form">
+				<h4>Enter Your Email ID</h4>
+				<form id="forgotForm" role="form">
 					<input type="text" name="email" placeholder="Email" required>
-					<input type="password" name="password" placeholder="Password" required>
-					<a href="forgotpassword" class="pull-right">Forgot password ?</a>
-					<button type="button" id="loginButton" class="btn btn-block btn-info">Login</button>
+					<div style="padding-top: 20px;"></div>
+					<button type="button" id="forgotButton" class="btn btn-block btn-info">Submit</button>
 				</form>
 			</div>
 			<div class="clearfix"></div>

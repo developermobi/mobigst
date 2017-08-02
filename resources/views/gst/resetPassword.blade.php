@@ -55,23 +55,27 @@
 				<div class="clearfix"></div>
 			</div>
 		</div>
+		@if($data['code'] == '200')
 		<div class="col-md-6 benefits-grid1 wow fadeInRight animated animated" data-wow-delay="0.4s">
 			<h4>Welcome to MobiTax GST</h4>
 			<br>
-			<a href="javascript:void();"><button class="btn btn-danger btn-block" type="button">
-				LOGIN VIA GOOGLE</button></a>
-				<center><p>OR</p></center>
-				<h4>Login with your email address</h4>
-				<form id="loginForm" role="form">
-					<input type="text" name="email" placeholder="Email" required>
-					<input type="password" name="password" placeholder="Password" required>
-					<a href="forgotpassword" class="pull-right">Forgot password ?</a>
-					<button type="button" id="loginButton" class="btn btn-block btn-info">Login</button>
-				</form>
-			</div>
-			<div class="clearfix"></div>
+			<h4>Reset Your Passord</h4>
+			<form id="resetForm" role="form">
+				<input type="hidden" class="form-control" name="user_id"  value="{{$data['data'][0]->user_id}}">
+				<input type="text" name="email" placeholder="Email" required>
+				<input type="password" name="password" id="password" placeholder="Password" required>
+				<input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+				<button type="button" id="resetButton" class="btn btn-block btn-info">Reset</button>
+			</form>
 		</div>
+		@else
+		<div class="col-md-6 benefits-grid1 wow fadeInRight animated animated" data-wow-delay="0.4s">
+		<h4>This reset password link has expired.</h4>
+		</div>
+		@endif
+		<div class="clearfix"></div>
 	</div>
+</div>
 </div>
 
 <script src="{{URL::asset('app/js/account.js')}}"></script>
