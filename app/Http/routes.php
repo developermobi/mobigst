@@ -90,6 +90,10 @@ Route::get('editCustomer/{id}', [
 	'as' => 'editCustomer/{id}', 'uses' => 'Api\V1\GstController@editContact'
 	]);
 
+Route::get('customerInfo/{id}', [
+	'as' => 'customerInfo/{id}', 'uses' => 'Api\V1\GstController@customerInfo'
+	]);
+
 $api->version('v1', function ($api) {
 	$api->post('signup', 'App\Http\Controllers\Api\V1\GstController@signup');
 });

@@ -7,6 +7,7 @@ use Dingo\Api\Routing\Helpers;
 use App\Http\Controllers\Controller;
 use League\Csv\Reader;
 use File;
+use Mail;
 use App\Gst;
 use Session;
 use View;
@@ -486,22 +487,19 @@ class GstController extends Controller{
 
 	public function addCustomer(Request $request){
 		$input = $request->all();
-
-		//$addCustomer = Gst::addCustomer($input);
-		//return $input['email'];
-		//if($addCustomer > 0){
+		//$input['gstin_request_status'] = '1';
+		$addCustomer = Gst::addCustomer($input);
+		
+		if($addCustomer > 0){
 
 			if($input['email'] != ''){
 				$mailInfo = array();
-				/*$mailInfo['email'] = $email;
-				$mailInfo['name'] = $name;
-				$mailInfo['show_name'] = $showDetail[0]->name;*/
-
-				$res = Mail::send('gst.gstinMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
-
+				$mailInfo['email'] = $input['email'];
+				$mailInfo['contact_id'] = $addCustomer;
+				$mail = Mail::send('gst.gstinMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
 					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
 					$message->to($mailInfo['email'])->subject('MobiGST Customer Mail');
-					$message->cc('prajwalweb@gmail.com');
+					$message->cc('prajwal.p@mobisofttech.co.in');
 				});
 			}
 
@@ -509,13 +507,33 @@ class GstController extends Controller{
 			$returnResponse['code'] = "201";
 			$returnResponse['message'] = "Customer added Sucessfully.";
 			$returnResponse['data'] = $addCustomer;
-		/*}else{
+		}else{
 			$returnResponse['status'] = "failed";
 			$returnResponse['code'] = "302";
 			$returnResponse['message'] = "Error while adding customer. Please try again.";
 			$returnResponse['data'] = $addCustomer;
 		}
-		return response()->json($returnResponse);*/
+		return response()->json($returnResponse);
+	}
+
+
+
+	public function customerInfo($id){
+		$contact_id = decrypt($id);
+		$getData = Gst::getContactData($contact_id);
+
+		if (sizeof($getData) > 0) {
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "200";
+			$returnResponse['message'] = "Data found.";
+			$returnResponse['data'] = $getData;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "No data found.";
+			$returnResponse['data'] = $getData;
+		}
+		return view('gst.customerInfo')->with('data', $returnResponse);
 	}
 
 
