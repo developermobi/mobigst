@@ -240,6 +240,45 @@ class Gst extends Model{
 
 
 
+	public static function requested($id){
+
+		$getData = DB::table('contact')
+		->where('business_id',$id)
+		->where('gstin_request_status',1)
+		->where('status',1)
+		->count();
+
+		return $getData;
+	}
+
+
+
+	public static function unrequested($id){
+
+		$getData = DB::table('contact')
+		->where('business_id',$id)
+		->where('gstin_request_status',0)
+		->where('status',1)
+		->count();
+
+		return $getData;
+	}
+
+
+
+	public static function received($id){
+
+		$getData = DB::table('contact')
+		->where('business_id',$id)
+		->where('gstin_request_status',2)
+		->where('status',1)
+		->count();
+
+		return $getData;
+	}
+
+
+
 	public static function getContactData($contact_id){
 		
 		$getData = DB::table('contact')

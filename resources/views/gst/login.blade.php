@@ -58,7 +58,7 @@
 		<div class="col-md-6 benefits-grid1 wow fadeInRight animated animated" data-wow-delay="0.4s">
 			<h4>Welcome to MobiTax GST</h4>
 			<br>
-			<a href="#"><button class="btn btn-danger btn-block" type="button">
+			<a href="javascript:void();"><button class="btn btn-danger btn-block" type="button">
 				LOGIN VIA GOOGLE</button></a>
 				<center><p>OR</p></center>
 				<h4>Login with your email address</h4>

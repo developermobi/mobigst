@@ -1,6 +1,6 @@
 $(function(){
 
-	getBusiness();
+	//getBusiness();
 
 	$('#updateCustomerInfo').click(function(){
 		updateCustomerInfo();
@@ -66,7 +66,7 @@ function updateCustomerInfo(){
 					confirmButtonText: "OK",
 					width:'400px',
 				}).then(function () {
-					window.location.href = SERVER_NAME+"/importitem";
+					window.location.href = window.location.href;
 				});
 			}else{
 				swal({

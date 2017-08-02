@@ -76,7 +76,7 @@
 							</div>
 							@endforeach
 							@else
-							<div class="row">
+							<div class="row" style="padding: 30px 10px;">
 								<center>
 									<h3>No business added. Click on add business to add.</h3>
 								</center>

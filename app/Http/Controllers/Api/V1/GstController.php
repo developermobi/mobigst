@@ -444,6 +444,7 @@ class GstController extends Controller{
 		$group_id = 1;
 		$user_id = 2;
 		foreach($res as $key => $val){
+			$key_value[$key]['business_id'] = $input['business_id'];
 			$key_value[$key]['unique_id'] = $res[$key][0];
 			$key_value[$key]['contact_type'] = $res[$key][1];
 			$key_value[$key]['business_name'] = $res[$key][2];
@@ -530,12 +531,21 @@ class GstController extends Controller{
 	public function contacts($id){
 		$id = decrypt($id);
 		$contacts =  Gst::contacts($id);
+		$requested = Gst::requested($id);
+		$unrequested = Gst::unrequested($id);
+		$received = Gst::received($id);
+
+		$info = array();
+		$info['contacts'] = $contacts;
+		$info['requested'] = $requested;
+		$info['unrequested'] = $unrequested;
+		$info['received'] = $received;
 
 		if (sizeof($contacts) > 0) {
 			$data['status'] = "success";
 			$data['code'] = "200";
 			$data['message'] = "Data found.";
-			$data['data'] = $contacts;
+			$data['data'] = $info;
 		}else{
 			$data['status'] = "success";
 			$data['code'] = "204";
@@ -622,17 +632,18 @@ class GstController extends Controller{
 					$message->to($mailInfo['email'])->subject('MobiGST Customer Mail');
 					$message->cc('prajwal.p@mobisofttech.co.in');
 				});
-				if($mail > 1){
+				
+				if($mail != ''){
 					$getData = Gst::requestInfo($id);
 					if (sizeof($getData) > 0) {
 						$returnResponse['status'] = "success";
 						$returnResponse['code'] = "200";
-						$returnResponse['message'] = "Contact deleted successfully.";
+						$returnResponse['message'] = "Request sent successfully.";
 						$returnResponse['data'] = $getData;
 					}else{
 						$returnResponse['status'] = "success";
 						$returnResponse['code'] = "204";
-						$returnResponse['message'] = "Something went wrong while requestiing. Please try again.";
+						$returnResponse['message'] = "Something went wrong while requesting. Please try again.";
 						$returnResponse['data'] = $getData;
 					}
 				}

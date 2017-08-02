@@ -60,8 +60,8 @@ Route::get('/addCustomer', function () {
 	return view('gst.addCustomer');
 });
 
-Route::get('/addItem', function () {
-	return view('gst.addItem');
+Route::get('/addservices', function () {
+	return view('gst.addservices');
 });
 
 Route::post('importContactFile', [
