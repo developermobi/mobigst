@@ -14,6 +14,10 @@ $(function(){
 		updateCustomer();
 	});
 
+	$('#updateCustomerInfo').click(function(){
+		updateCustomerInfo();
+	});
+
 	$("#customerForm").validate({
 		rules: {    
 			business_id:{
@@ -230,8 +234,6 @@ function deleteContact(obj) {
     })
 }
 
-
-
 function requestInfo(obj) {
 
     swal({
@@ -282,4 +284,5 @@ function requestInfo(obj) {
             }
         });
     })
+
 }
