@@ -7,6 +7,7 @@ use Dingo\Api\Routing\Helpers;
 use App\Http\Controllers\Controller;
 use League\Csv\Reader;
 use File;
+use Mail;
 use App\Gst;
 use Session;
 use View;
@@ -465,6 +466,7 @@ class GstController extends Controller{
 		$infoFileInsertedData = Gst::addContactFromCSV($collection->toArray());  
 		
 		if($infoFileInsertedData){
+			$response['numbers'] = sizeof($collection);
 			$response['status'] = "success";
 			$response['code'] = 200;
 			$response['message'] = "OK";
@@ -473,49 +475,54 @@ class GstController extends Controller{
 			$response['end_time'] = date("h:i:sa");
 			unlink($full_url);
 		}else{
+			$response['numbers'] = sizeof($collection);
 			$response['status'] = "fail";
 			$response['code'] = 400;
 			$response['message'] = "Bad Request";
 			$response['data'] = $infoFileInsertedData;
 			unlink($full_url);
 		}
-		return view('gst.importitem')->with('data', $response);
+		return view('gst.importContactMsg')->with('data', $response);
 	}
 
 
 
 	public function addCustomer(Request $request){
 		$input = $request->all();
-
-		//$addCustomer = Gst::addCustomer($input);
-		//return $input['email'];
-		//if($addCustomer > 0){
-
-			if($input['email'] != ''){
-				$mailInfo = array();
-				/*$mailInfo['email'] = $email;
-				$mailInfo['name'] = $name;
-				$mailInfo['show_name'] = $showDetail[0]->name;*/
-
-				$res = Mail::send('gst.gstinMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
-
-					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
-					$message->to($mailInfo['email'])->subject('MobiGST Customer Mail');
-					$message->cc('prajwalweb@gmail.com');
-				});
-			}
-
+		$addCustomer = Gst::addCustomer($input);
+		
+		if($addCustomer > 0){
 			$returnResponse['status'] = "success";
 			$returnResponse['code'] = "201";
 			$returnResponse['message'] = "Customer added Sucessfully.";
 			$returnResponse['data'] = $addCustomer;
-		/*}else{
+		}else{
 			$returnResponse['status'] = "failed";
 			$returnResponse['code'] = "302";
 			$returnResponse['message'] = "Error while adding customer. Please try again.";
 			$returnResponse['data'] = $addCustomer;
 		}
-		return response()->json($returnResponse);*/
+		return response()->json($returnResponse);
+	}
+
+
+
+	public function customerInfo($id){
+		$contact_id = decrypt($id);
+		$getData = Gst::getContactData($contact_id);
+
+		if (sizeof($getData) > 0) {
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "200";
+			$returnResponse['message'] = "Data found.";
+			$returnResponse['data'] = $getData;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "No data found.";
+			$returnResponse['data'] = $getData;
+		}
+		return view('gst.customerInfo')->with('data', $returnResponse);
 	}
 
 
@@ -594,6 +601,46 @@ class GstController extends Controller{
 			$returnResponse['status'] = "success";
 			$returnResponse['code'] = "204";
 			$returnResponse['message'] = "Something went wrong while deleting contact.";
+			$returnResponse['data'] = $getData;
+		}
+		return response()->json($returnResponse);
+	}
+
+
+
+	public function requestInfo($id){
+
+		$getInfo = Gst::getContactData($id);
+
+		if(sizeof($getInfo) > 0){
+			if($getInfo[0]->email != ''){
+				$mailInfo = array();
+				$mailInfo['email'] = $getInfo[0]->email;
+				$mailInfo['contact_id'] = $getInfo[0]->contact_id;
+				$mail = Mail::send('gst.gstinMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
+					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
+					$message->to($mailInfo['email'])->subject('MobiGST Customer Mail');
+					$message->cc('prajwal.p@mobisofttech.co.in');
+				});
+				if($mail > 1){
+					$getData = Gst::requestInfo($id);
+					if (sizeof($getData) > 0) {
+						$returnResponse['status'] = "success";
+						$returnResponse['code'] = "200";
+						$returnResponse['message'] = "Contact deleted successfully.";
+						$returnResponse['data'] = $getData;
+					}else{
+						$returnResponse['status'] = "success";
+						$returnResponse['code'] = "204";
+						$returnResponse['message'] = "Something went wrong while requestiing. Please try again.";
+						$returnResponse['data'] = $getData;
+					}
+				}
+			}
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "Something went wrong while requesting. Please try again.";
 			$returnResponse['data'] = $getData;
 		}
 		return response()->json($returnResponse);
@@ -687,27 +734,6 @@ class GstController extends Controller{
 		
 		return response()->json($returnResponse);
 	}
-
-
-
-	/*public function items($id){
-
-		$items =  Gst::items($id);
-
-		if (sizeof($items) > 0) {
-			$data['status'] = "success";
-			$data['code'] = "200";
-			$data['message'] = "Data found.";
-			$data['data'] = $items;
-		}else{
-			$data['status'] = "success";
-			$data['code'] = "204";
-			$data['message'] = "No data found.";
-			$data['data'] = '';
-		}
-		
-		return view('gst.items')->with('data', $data);
-	}*/
 
 
 

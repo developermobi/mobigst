@@ -1,5 +1,8 @@
 /vendor
 /node_modules
+/public/Contact
+/public/app/js/global.js
+/config/database.php
 Homestead.yaml
 Homestead.json
 .env

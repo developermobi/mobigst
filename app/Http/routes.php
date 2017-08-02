@@ -90,6 +90,10 @@ Route::get('editCustomer/{id}', [
 	'as' => 'editCustomer/{id}', 'uses' => 'Api\V1\GstController@editContact'
 	]);
 
+Route::get('customerInfo/{id}', [
+	'as' => 'customerInfo/{id}', 'uses' => 'Api\V1\GstController@customerInfo'
+	]);
+
 $api->version('v1', function ($api) {
 	$api->post('signup', 'App\Http\Controllers\Api\V1\GstController@signup');
 });
@@ -156,6 +160,10 @@ $api->version('v1', function ($api) {
 
 $api->version('v1', function ($api) {
 	$api->post('deleteContact/{id}', 'App\Http\Controllers\Api\V1\GstController@deleteContact');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('requestInfo/{id}', 'App\Http\Controllers\Api\V1\GstController@requestInfo');
 });
 
 $api->version('v1', function ($api) {

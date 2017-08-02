@@ -60,7 +60,7 @@
 						<div class="col-md-6">
 							<div class="form-group">
 								<label for="email">Email Id:</label>
-								<input type="email" class="form-control" placeholder="Email Id" name="email">
+								<input type="email" class="form-control" placeholder="Email Id" name="email" value="prajwal.p@mobisofttech.co.in">
 							</div>
 							<div class="form-group">
 								<label for="pan">PAN:</label>

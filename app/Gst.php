@@ -221,7 +221,7 @@ class Gst extends Model{
 		$input['created_at'] = date('Y-m-d H:i:s');
 
 		$addCustomer = DB::table('contact')
-		->insert($input);
+		->insertGetId($input);
 
 		return $addCustomer;
 	}
@@ -241,7 +241,7 @@ class Gst extends Model{
 
 
 	public static function getContactData($contact_id){
-
+		
 		$getData = DB::table('contact')
 		->where('contact_id',$contact_id)
 		->where('status',1)
@@ -255,6 +255,18 @@ class Gst extends Model{
 	public static function deleteContact($contact_id){
 
 		$data['status'] = '0';
+		$updateData = DB::table('contact')
+		->where('contact_id', $contact_id)
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
+	public static function requestInfo($contact_id){
+
+		$data['gstin_request_status'] = '1';
 		$updateData = DB::table('contact')
 		->where('contact_id', $contact_id)
 		->update($data);

@@ -32,25 +32,6 @@ $(function(){
 			gstin_no:"Please enter valid gstin no.",
 		}
 	});
-
-	$("#updateCustomerForm").validate({
-		rules: {    
-			business_id:{
-				required: true,
-			},
-			pan_no:{
-				required: true,
-			},
-			gstin_no:{
-				required: true,
-			},
-		},
-		messages: {    
-			business_id:"Please select business.",
-			pan_no:"Please enter pan no.",
-			gstin_no:"Please enter valid gstin no.",
-		}
-	});
 });
 
 
@@ -244,6 +225,60 @@ function deleteContact(obj) {
             },
             complete: function() {
                 $(".bodyLoaderWithOverlay").hide();
+            }
+        });
+    })
+}
+
+
+
+function requestInfo(obj) {
+
+    swal({
+        text: "Do you want to request for this contact ?",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes'
+    }).then(function() {
+        var id = $(obj).attr('data-id');
+        $.ajax({
+            "async": true,
+            "crossDomain": true,
+            "url": SERVER_NAME + "/api/requestInfo/" + id,
+            "method": "POST",
+            "headers": {
+                "cache-control": "no-cache",
+                "postman-token": "5d6d42d9-9cdb-e834-6366-d217b8e77f59"
+            },
+            "processData": false,
+            "dataType": "JSON",
+            beforeSend: function() {
+                $("#requestButton").prop('disabled', true).text('Requesting, Please Wait...');
+            },
+            success: function(response) {
+                if (response.code == 200) {
+                    swal({
+                        title: "Success !",
+                        text: response.message,
+                        type: "success",
+                        confirmButtonText: "OK",
+                        width: '400px',
+                    }).then(function() {
+                        window.location.href = window.location.href;
+                    });
+                } else {
+                    swal({
+                        title: "Failed!",
+                        text: response.message,
+                        type: "error",
+                        confirmButtonText: "Close",
+                    });
+                }
+            },
+            complete: function() {
+               //$("#requestButton").prop('disabled', true).text('Requested.');
             }
         });
     })
