@@ -466,6 +466,7 @@ class GstController extends Controller{
 		$infoFileInsertedData = Gst::addContactFromCSV($collection->toArray());  
 		
 		if($infoFileInsertedData){
+			$response['numbers'] = sizeof($collection);
 			$response['status'] = "success";
 			$response['code'] = 200;
 			$response['message'] = "OK";
@@ -474,35 +475,23 @@ class GstController extends Controller{
 			$response['end_time'] = date("h:i:sa");
 			unlink($full_url);
 		}else{
+			$response['numbers'] = sizeof($collection);
 			$response['status'] = "fail";
 			$response['code'] = 400;
 			$response['message'] = "Bad Request";
 			$response['data'] = $infoFileInsertedData;
 			unlink($full_url);
 		}
-		return view('gst.importitem')->with('data', $response);
+		return view('gst.importContactMsg')->with('data', $response);
 	}
 
 
 
 	public function addCustomer(Request $request){
 		$input = $request->all();
-		//$input['gstin_request_status'] = '1';
 		$addCustomer = Gst::addCustomer($input);
 		
 		if($addCustomer > 0){
-
-			if($input['email'] != ''){
-				$mailInfo = array();
-				$mailInfo['email'] = $input['email'];
-				$mailInfo['contact_id'] = $addCustomer;
-				$mail = Mail::send('gst.gstinMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
-					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
-					$message->to($mailInfo['email'])->subject('MobiGST Customer Mail');
-					$message->cc('prajwal.p@mobisofttech.co.in');
-				});
-			}
-
 			$returnResponse['status'] = "success";
 			$returnResponse['code'] = "201";
 			$returnResponse['message'] = "Customer added Sucessfully.";
@@ -619,6 +608,46 @@ class GstController extends Controller{
 
 
 
+	public function requestInfo($id){
+
+		$getInfo = Gst::getContactData($id);
+
+		if(sizeof($getInfo) > 0){
+			if($getInfo[0]->email != ''){
+				$mailInfo = array();
+				$mailInfo['email'] = $getInfo[0]->email;
+				$mailInfo['contact_id'] = $getInfo[0]->contact_id;
+				$mail = Mail::send('gst.gstinMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
+					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
+					$message->to($mailInfo['email'])->subject('MobiGST Customer Mail');
+					$message->cc('prajwal.p@mobisofttech.co.in');
+				});
+				if($mail > 1){
+					$getData = Gst::requestInfo($id);
+					if (sizeof($getData) > 0) {
+						$returnResponse['status'] = "success";
+						$returnResponse['code'] = "200";
+						$returnResponse['message'] = "Contact deleted successfully.";
+						$returnResponse['data'] = $getData;
+					}else{
+						$returnResponse['status'] = "success";
+						$returnResponse['code'] = "204";
+						$returnResponse['message'] = "Something went wrong while requestiing. Please try again.";
+						$returnResponse['data'] = $getData;
+					}
+				}
+			}
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "Something went wrong while requesting. Please try again.";
+			$returnResponse['data'] = $getData;
+		}
+		return response()->json($returnResponse);
+	}
+
+
+
 	public function importItemFile(Request $request){	
 
 		$input = $request->all();
@@ -705,27 +734,6 @@ class GstController extends Controller{
 		
 		return response()->json($returnResponse);
 	}
-
-
-
-	/*public function items($id){
-
-		$items =  Gst::items($id);
-
-		if (sizeof($items) > 0) {
-			$data['status'] = "success";
-			$data['code'] = "200";
-			$data['message'] = "Data found.";
-			$data['data'] = $items;
-		}else{
-			$data['status'] = "success";
-			$data['code'] = "204";
-			$data['message'] = "No data found.";
-			$data['data'] = '';
-		}
-		
-		return view('gst.items')->with('data', $data);
-	}*/
 
 
 

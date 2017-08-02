@@ -24,19 +24,12 @@
 			<div class="about-grid1 wow fadeInLeft animated animated" data-wow-delay="0.4s">
 				<h2>GSTIN Details</h2>
 				<form id="updateCustomerForm" role="form">
-				<input type="hidden" class="form-control" id="contact_id"  value="{{$data['data'][0]->contact_id}}">
-				<input type="hidden" class="form-control" name="gstin_request_status"  value="2">
-					<!-- <div class="form-group">
-						<label for="regbusiname">Registered Business Name<span>*</span> :</label>
-						<input type="text" class="form-control" id="regbusiname" placeholder="Registered Business Name" name="regbusiname">
-					</div> -->
+
+					<input type="hidden" class="form-control" id="contact_id"  value="{{$data['data'][0]->contact_id}}">
+					<input type="hidden" class="form-control" name="gstin_request_status"  value="2">
 					<div class="form-group">
 						<label for="name">Your Name (will be associated with the business)<span>*</span> :</label>
-						<!-- @if($data['data'][0]->contact_name != '')
-						<input type="text" class="form-control" disabled value="{{$data['data'][0]->contact_name}}">
-						@else
-						<input type="text" class="form-control" id="name" placeholder="Your Name" name="name">
-						@endif -->
+
 						<input type="text" class="form-control" placeholder="Customer Or Vendor Name" name="contact_name" value="{{$data['data'][0]->contact_name}}">
 					</div>
 					<div class="form-group">
@@ -87,6 +80,10 @@
 	</div>
 </div>
 
+<<<<<<< HEAD
 <script src="{{URL::asset('app/js/addcustomer.js')}}"></script>
+=======
+<script src="{{URL::asset('app/js/customerinfo.js')}}"></script>
+>>>>>>> 167cd8badfc953dcbc95dd8dc0fed5a9dfb41fce
 
 @endsection

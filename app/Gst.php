@@ -264,6 +264,18 @@ class Gst extends Model{
 
 
 
+	public static function requestInfo($contact_id){
+
+		$data['gstin_request_status'] = '1';
+		$updateData = DB::table('contact')
+		->where('contact_id', $contact_id)
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
 	public static function updateContact($data,$id){
 		
 		$updateData = DB::table('contact')

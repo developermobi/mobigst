@@ -69,6 +69,12 @@
 							<td>{{$value->state}}</td>
 							<td>{{$value->gstin_no}}</td>
 							<td>
+								@if($value->gstin_request_status == '0')
+								<a class='btn btn-sm btn-default' id="requestButton" onclick=requestInfo(this); data-id='{{ $value->contact_id }}'>Request</a>
+								@elseif($value->gstin_request_status == '1')
+								<a class='btn btn-sm btn-success' disabled> <i class="fa fa-check-circle" aria-hidden="true"></i> Requested</a>
+								@else
+								@endif
 								<a class='btn btn-sm btn-info' href="/editCustomer/{{encrypt($value->contact_id)}}">Edit</a>
 								<a class='btn btn-sm btn-danger' onclick=deleteContact(this); data-id='{{ $value->contact_id }}'>Delete</a>
 							</td>

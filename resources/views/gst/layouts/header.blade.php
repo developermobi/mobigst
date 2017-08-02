@@ -18,9 +18,9 @@
 		<div id="navbar" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav navbar-right wow fadeInRight animated animated" data-wow-delay="0.4s">
 				<li><a class="nav-in" href="class">Need Help ?</a></li>
-				<li id="login_li" style="display: none;"><button type="button" class="btn btn-default"><a href="login">Login</a></button></li>
+				<li id="login_li" style="display: none;"><a href="login"><button type="button" class="btn btn-default">Login</button></a></li>
 				<li id="signup_li" style="display: none;">
-					<button type="button" class="btn btn-warning"><a href="signup"><span style="color: #fff;">Sign up</span></a></button>
+					<a href="signup"><button type="button" class="btn btn-warning"><span style="color: #fff;">Sign up</span></button></a>
 				</li>
 				<li id="welcome_user_li" style="display: none;">
 					<button class="btn btn-danger btn-block dropdown-toggle" type="button" data-toggle="dropdown">

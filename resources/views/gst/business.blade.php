@@ -66,7 +66,7 @@
 											<span style="font-size: 16px;"><b>{{$d_value->display_name}}</b> - GSTIN no. ( {{$d_value->gstin_no}} )</span>
 										</div>
 										<div class="col-md-2">
-											<a href="work/{{$d_value->gstin_id}}">
+											<a href="javascript:void();">
 												<button class="btn btn-info">Work On This</button>
 											</a>
 										</div>
