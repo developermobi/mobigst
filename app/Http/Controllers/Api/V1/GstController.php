@@ -130,6 +130,105 @@ class GstController extends Controller{
 
 
 
+	public function forgotpassword(Request $request){
+		$input = $request->all();
+
+		$findemsilid = Gst::findemsilid($input);
+
+		if(sizeof($findemsilid) > 0){
+
+			$data['forget_password_id'] = substr(md5(mt_rand()), 5, 20);
+			$data['user_id'] = $findemsilid[0]->user_id; 
+
+			$updateForgetPasswordId = Gst::updateForgetPasswordId($data);
+
+			if($updateForgetPasswordId > 0){
+
+				$getUserData = Gst::getUserData($findemsilid[0]->user_id);
+
+				$mailInfo = array();
+				$mailInfo['email'] = $input['email'];
+				$mailInfo['user_id'] = $getUserData[0]->user_id;
+				$mailInfo['forget_password_id'] = $getUserData[0]->forget_password_id;
+				$mail = Mail::send('gst.gstinMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
+					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
+					$message->to($mailInfo['email'])->subject('MobiGST - Reset Password Link');
+					$message->cc('prajwal.p@mobisofttech.co.in');
+				});
+				if($mail != ''){
+					$returnResponse['status'] = "success";
+					$returnResponse['code'] = "200";
+					$returnResponse['message'] = "Password reset link sent to your eamil id.";
+					$returnResponse['data'] = $findemsilid;
+				}else{
+					$returnResponse['status'] = "failed";
+					$returnResponse['code'] = "204";
+					$returnResponse['message'] = "Something went wrong while sending mail. Please try again.";
+					$returnResponse['data'] = $findemsilid;
+				}
+			}else{
+				$returnResponse['status'] = "failed";
+				$returnResponse['code'] = "204";
+				$returnResponse['message'] = "Something went wrong while sending mail. Please try again.";
+				$returnResponse['data'] = $findemsilid;
+			}
+		}else{
+			$returnResponse['status'] = "failed";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "Your email id is not registered with us. Please check your email id.";
+			$returnResponse['data'] = $findemsilid;
+		}
+		return response()->json($returnResponse);
+	}
+
+
+
+	public function resetPassword($id,$forget_password_id){
+		$user_id = decrypt($id);
+		$getData = Gst::getUserDataFP($user_id,$forget_password_id);
+
+		if (sizeof($getData) > 0) {
+			$data['forget_password_id'] = substr(md5(mt_rand()), 5, 20);
+			$data['user_id'] = $user_id; 
+
+			$updateForgetPasswordId = Gst::updateForgetPasswordId($data);
+
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "200";
+			$returnResponse['message'] = "Data found.";
+			$returnResponse['data'] = $getData;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "Link expired. Please try again.";
+			$returnResponse['data'] = $getData;
+		}
+		return view('gst.resetPassword')->with('data', $returnResponse);
+	}
+
+
+
+	public function updatepassword(Request $request, $id){
+		$input = $request->all();
+
+		$updatepassword = Gst::updatepassword($input,$id);
+
+		if($updatepassword > 0){
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "200";
+			$returnResponse['message'] = "Password updated successfully.";
+			$returnResponse['data'] = $updatepassword;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "Not updated.";
+			$returnResponse['data'] = $updatepassword;
+		}
+		return response()->json($returnResponse);
+	}
+
+
+
 	public function logout(Request $request){
 		$input = $request->all();
 
@@ -444,6 +543,7 @@ class GstController extends Controller{
 		$group_id = 1;
 		$user_id = 2;
 		foreach($res as $key => $val){
+			$key_value[$key]['business_id'] = $input['business_id'];
 			$key_value[$key]['unique_id'] = $res[$key][0];
 			$key_value[$key]['contact_type'] = $res[$key][1];
 			$key_value[$key]['business_name'] = $res[$key][2];
@@ -530,12 +630,21 @@ class GstController extends Controller{
 	public function contacts($id){
 		$id = decrypt($id);
 		$contacts =  Gst::contacts($id);
+		$requested = Gst::requested($id);
+		$unrequested = Gst::unrequested($id);
+		$received = Gst::received($id);
+
+		$info = array();
+		$info['contacts'] = $contacts;
+		$info['requested'] = $requested;
+		$info['unrequested'] = $unrequested;
+		$info['received'] = $received;
 
 		if (sizeof($contacts) > 0) {
 			$data['status'] = "success";
 			$data['code'] = "200";
 			$data['message'] = "Data found.";
-			$data['data'] = $contacts;
+			$data['data'] = $info;
 		}else{
 			$data['status'] = "success";
 			$data['code'] = "204";
@@ -622,17 +731,17 @@ class GstController extends Controller{
 					$message->to($mailInfo['email'])->subject('MobiGST Customer Mail');
 					$message->cc('prajwal.p@mobisofttech.co.in');
 				});
-				if($mail > 1){
+				if($mail != ''){
 					$getData = Gst::requestInfo($id);
 					if (sizeof($getData) > 0) {
 						$returnResponse['status'] = "success";
 						$returnResponse['code'] = "200";
-						$returnResponse['message'] = "Contact deleted successfully.";
+						$returnResponse['message'] = "Request sent successfully.";
 						$returnResponse['data'] = $getData;
 					}else{
 						$returnResponse['status'] = "success";
 						$returnResponse['code'] = "204";
-						$returnResponse['message'] = "Something went wrong while requestiing. Please try again.";
+						$returnResponse['message'] = "Something went wrong while requesting. Please try again.";
 						$returnResponse['data'] = $getData;
 					}
 				}

@@ -77,6 +77,65 @@ class Gst extends Model{
 
 
 
+	public static function findemsilid($input){
+
+		$login = DB::table('user')
+		->where('email', $input['email'])
+		->where('status',1)
+		->get();
+
+		return  $login;
+	}
+
+
+
+	public static function updateForgetPasswordId($data){
+
+		$updateData = DB::table('user')
+		->where('user_id',"=",$data['user_id'])
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
+	public static function getUserData($input){
+
+		$login = DB::table('user')
+		->where('user_id', $input['user_id'])
+		->where('status',1)
+		->get();
+
+		return  $login;
+	}
+
+
+
+	public static function getUserDataFP($user_id,$forget_password_id){
+
+		$login = DB::table('user')
+		->where('user_id', $user_id)
+		->where('forget_password_id', $forget_password_id)
+		->where('status',1)
+		->get();
+
+		return  $login;
+	}
+
+
+
+	public static function updatepassword($data,$id){
+
+		$updateData = DB::table('user')
+		->where('user_id',"=",$id)
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
 	public static function logout($input){
 
 		$logout = DB::table('user')
@@ -234,6 +293,45 @@ class Gst extends Model{
 		->where('business_id',$id)
 		->where('status',1)
 		->paginate(10);
+
+		return $getData;
+	}
+
+
+
+	public static function requested($id){
+
+		$getData = DB::table('contact')
+		->where('business_id',$id)
+		->where('gstin_request_status',1)
+		->where('status',1)
+		->count();
+
+		return $getData;
+	}
+
+
+
+	public static function unrequested($id){
+
+		$getData = DB::table('contact')
+		->where('business_id',$id)
+		->where('gstin_request_status',0)
+		->where('status',1)
+		->count();
+
+		return $getData;
+	}
+
+
+
+	public static function received($id){
+
+		$getData = DB::table('contact')
+		->where('business_id',$id)
+		->where('gstin_request_status',2)
+		->where('status',1)
+		->count();
 
 		return $getData;
 	}

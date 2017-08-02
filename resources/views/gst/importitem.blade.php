@@ -32,7 +32,7 @@
 						</div>
 						<div class="col-md-6 about-grid1 wow fadeInLeft animated animated" data-wow-delay="0.4s">
 							<p>To know the structure of <strong>Item Master</strong></p>
-							<a href="https://d494qy7qcliw5.cloudfront.net/cleargst-templates/item_master_template.xlsx" download="file_name">
+							<a href="http://mobigst.mobisofttech.co.in:8989/files/item.csv" target="_BLANK">
 								<button class="btn btn-success" type="button">Download Sample</button>
 							</a>
 							<a href="addItem" >

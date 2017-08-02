@@ -30,7 +30,7 @@
 						<a href="\importcontact"><button class="btn btn-warning" type="button">Import Customers Or Vendors</button></a>
 					</td>
 					<td>
-						<a href="\addCustomer"><button class="btn btn-success" type="button">+New Customer Or Vendor</button>
+						<a href="\addCustomer"><button class="btn btn-success" type="button"> + New Customer Or Vendor</button>
 						</td>
 					</tr>
 				</table>
@@ -40,13 +40,21 @@
 						<td>GSTIN requested And Received</td>
 						<td>GSTIN requested Not Received </td>
 						<td>GSTIN Unrequested</td>
-						<td rowspan="2"><button class="btn btn-info" disabled type="button">Request Now</button></td>
+						<!-- <td rowspan="2"><button class="btn btn-info" disabled type="button">Request Now</button></td> -->
 					</tr>
+					@if($data['code'] == '200')
+					<tr>
+						<td>{{$data['data']['received']}}</td>
+						<td>{{$data['data']['unrequested']}}</td>
+						<td>{{$data['data']['requested']}}</td>
+					</tr>
+					@else
 					<tr>
 						<td>0</td>
-						<td>5</td>
+						<td>0</td>
 						<td>0</td>
 					</tr>
+					@endif
 				</table>
 				<table class="table table-striped table-bordered">
 					<thead>
@@ -61,7 +69,7 @@
 					</thead>
 					<tbody>
 						@if($data['code'] == '200')
-						@foreach($data['data'] as $key => $value)
+						@foreach($data['data']['contacts'] as $key => $value)
 						<tr>
 							<td>{{$value->contact_name}}</td>
 							<td>{{$value->pan_no}}</td>
@@ -82,7 +90,7 @@
 						@endforeach
 						@else
 						<tr>
-							<td colspan="6">No contact found. Click on add contact button to add one.</td>
+							<td colspan="6">No contact found. Click on add customer or vendor button to add one.</td>
 						</tr>
 						@endif
 					</tbody>
@@ -91,7 +99,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					@if($data['code'] == '200')
-					<span style="float: right;"><?php echo $data['data']->render(); ?></span>
+					<span style="float: right;"><?php echo $data['data']['contacts']->render(); ?></span>
 					@endif
 				</div>
 			</div>

@@ -28,6 +28,10 @@ Route::get('/login', function () {
 	return view('gst.login');
 });
 
+Route::get('/forgotpassword', function () {
+	return view('gst.forgotpassword');
+});
+
 Route::get('/signup', function () {
 	return view('gst.signup');
 });
@@ -94,6 +98,10 @@ Route::get('customerInfo/{id}', [
 	'as' => 'customerInfo/{id}', 'uses' => 'Api\V1\GstController@customerInfo'
 	]);
 
+Route::get('resetPassword/{id,forget_password_id}', [
+	'as' => 'resetPassword/{id,forget_password_id}', 'uses' => 'Api\V1\GstController@resetPassword'
+	]);
+
 $api->version('v1', function ($api) {
 	$api->post('signup', 'App\Http\Controllers\Api\V1\GstController@signup');
 });
@@ -108,6 +116,14 @@ $api->version('v1', function ($api) {
 
 $api->version('v1', function ($api) {
 	$api->post('login', 'App\Http\Controllers\Api\V1\GstController@login');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('forgotpassword', 'App\Http\Controllers\Api\V1\GstController@forgotpassword');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('updatepassword/{id}', 'App\Http\Controllers\Api\V1\GstController@updatepassword');
 });
 
 $api->version('v1', function ($api) {
