@@ -61,15 +61,17 @@
 			<div class="col-md-6 benefits-grid1 wow fadeInRight animated animated" data-wow-delay="0.4s">
 				<h4>Welcome to MobiTax GST</h4>
 				<br>
-				<a href="javascript:void();"><button class="btn btn-danger btn-block" type="button">LOGIN VIA GOOGLE</button></a>
-				<center><p>OR</p></center>
+				<!-- <a href="javascript:void();">
+					<button class="btn btn-danger btn-block" type="button">LOGIN VIA GOOGLE</button>
+				</a>
+				<center><p>OR</p></center> -->
 				<h4>Sign up with your email address</h4>
 				<form id="signupForm" role="form">
 					<input type="text" name="email" placeholder="Email" required>
 					<input type="password" name="password" id="password" placeholder="Password" required>
 					<input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
 					<p style="margin-bottom: 10px;">
-						By creating an account, you hereby agree to follow <a href="tnc">these terms and conditions.</a>
+						By creating an account, you hereby agree to follow <a href="javascript:void();">these terms and conditions.</a>
 					</p>
 					<button type="button" id="register" class="btn btn-block btn-info">Join Now</button>
 				</form>

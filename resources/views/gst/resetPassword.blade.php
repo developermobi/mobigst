@@ -61,8 +61,7 @@
 			<br>
 			<h4>Reset Your Passord</h4>
 			<form id="resetForm" role="form">
-				<input type="hidden" class="form-control" name="user_id"  value="{{$data['data'][0]->user_id}}">
-				<input type="text" name="email" placeholder="Email" required>
+				<input type="hidden" class="form-control" id="user_id"  value="{{$data['data'][0]->user_id}}">
 				<input type="password" name="password" id="password" placeholder="Password" required>
 				<input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
 				<button type="button" id="resetButton" class="btn btn-block btn-info">Reset</button>

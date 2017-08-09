@@ -182,7 +182,7 @@ function updateItem(){
 					confirmButtonText: "OK",
 					width:'400px',
 				}).then(function () {
-					window.location.href = SERVER_NAME+"/items";
+					window.location.href = SERVER_NAME+"/importitem";
 				});
 			}else{
 				swal({

@@ -21,6 +21,10 @@
 <div class="train w3-agile">
 	<div class="container">
 		<h2>Import Items</h2>
+		<a href="addservices">
+			<button class="btn btn-info" type="button" style="float: left;"> + New Item</button>
+		</a>
+		<button class="btn btn-warning" type="button" data-toggle="modal" data-target="#viewItem" style="float: left;margin-left: 5px;">View Items</button>
 		<div class="train-grids">
 			<div class="latest-top" >
 				<form enctype="multipart/form-data"  method="post" action="/importItemFile">
@@ -33,12 +37,8 @@
 						<div class="col-md-6 about-grid1 wow fadeInLeft animated animated" data-wow-delay="0.4s">
 							<p>To know the structure of <strong>Item Master</strong></p>
 							<a href="http://mobigst.mobisofttech.co.in:8989/files/item.csv" target="_BLANK">
-								<button class="btn btn-success" type="button">Download Sample</button>
+								<button class="btn btn-success" type="button">Download Sample File</button>
 							</a>
-							<a href="addItem" >
-								<button class="btn btn-info" type="button"> + New Item</button>
-							</a>
-							<button class="btn btn-warning" type="button" data-toggle="modal" data-target="#viewItem"> View Items </button>
 						</div>	
 						<div class="image-upload">
 							<label for="file-input">

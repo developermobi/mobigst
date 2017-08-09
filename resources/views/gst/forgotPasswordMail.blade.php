@@ -44,7 +44,7 @@
 							<h1>Hi,</h1><br>
 							<p>
 								Reset Password Link.<br><br><br>
-								<a href="{{ env('APP_URL') }}/resetPassword/{{encrypt($mailInfo['user_id'])}}/$mailInfo['forget_password_id']" target="_blank">
+								<a href="{{ env('APP_URL') }}/resetPassword/{{encrypt($mailInfo['user_id'])}}/{{$mailInfo['forget_password_id']}}" target="_blank">
 									<button class="btn btn-success">Reset Passowrd</button></a><br><br>
 								</p>
 								<p>Thanks,<br>

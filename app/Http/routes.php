@@ -2,18 +2,17 @@
 
 use Illuminate\Support\Facades\Input;
 use App\Gst;
+use App\Invoice;
 
 $api = app('Dingo\Api\Routing\Router');
 
+
+
+
 /*
 |--------------------------------------------------------------------------
-| Routes File
+| GST PAGES AND API'S
 |--------------------------------------------------------------------------
-|
-| Here is where you will register all of the routes in an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
 */
 
 Route::get('/', function () {
@@ -64,8 +63,8 @@ Route::get('/addCustomer', function () {
 	return view('gst.addCustomer');
 });
 
-Route::get('/addItem', function () {
-	return view('gst.addItem');
+Route::get('/addservices', function () {
+	return view('gst.addservices');
 });
 
 Route::post('importContactFile', [
@@ -98,9 +97,15 @@ Route::get('customerInfo/{id}', [
 	'as' => 'customerInfo/{id}', 'uses' => 'Api\V1\GstController@customerInfo'
 	]);
 
-Route::get('resetPassword/{id,forget_password_id}', [
-	'as' => 'resetPassword/{id,forget_password_id}', 'uses' => 'Api\V1\GstController@resetPassword'
+Route::get('resetPassword/{id}/{forget_password_id}', [
+	'as' => 'resetPassword/{id}/{forget_password_id}', 'uses' => 'Api\V1\GstController@resetPassword'
 	]);
+
+Route::get('select/{id}', [
+	'as' => 'select/{id}', 'uses' => 'Api\V1\GstController@select'
+	]);
+
+
 
 $api->version('v1', function ($api) {
 	$api->post('signup', 'App\Http\Controllers\Api\V1\GstController@signup');
@@ -199,6 +204,64 @@ $api->version('v1', function ($api) {
 });
 
 
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| SALES PAGES AND API'S
+|--------------------------------------------------------------------------
+*/
+
+Route::get('sales/{id}', [
+	'as' => 'sales/{id}', 'uses' => 'Api\V1\SalesController@sales'
+	]);
+
+Route::get('selectSalesInvoice/{id}', [
+	'as' => 'selectSalesInvoice/{id}', 'uses' => 'Api\V1\SalesController@selectSalesInvoice'
+	]);
+
+Route::get('goodsSalesInvoice/{id}', [
+	'as' => 'goodsSalesInvoice/{id}', 'uses' => 'Api\V1\SalesController@goodsSalesInvoice'
+	]);
+
+$api->version('v1', function ($api) {
+	$api->get('getContact/{business_id}', 'App\Http\Controllers\Api\V1\SalesController@getContact');
+});
+
+$api->version('v1', function ($api) {
+	$api->get('getStates', 'App\Http\Controllers\Api\V1\SalesController@getStates');
+});
+
+$api->version('v1', function ($api) {
+	$api->get('getContactInfo/{contact_id}', 'App\Http\Controllers\Api\V1\SalesController@getContactInfo');
+});
+
+$api->version('v1', function ($api) {
+	$api->get('getItem/{business_id}', 'App\Http\Controllers\Api\V1\SalesController@getItem');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('saveSalesInvoice', 'App\Http\Controllers\Api\V1\SalesController@saveSalesInvoice');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| PURCHASE PAGES AND API'S
+|--------------------------------------------------------------------------
+*/
 
 
 

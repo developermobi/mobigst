@@ -42,7 +42,7 @@ class GstController extends Controller{
 				$returnResponse['data'] = $addUser;
 			}else{
 				$returnResponse['status'] = "failed";
-				$returnResponse['code'] = "302";
+				$returnResponse['code'] = "400";
 				$returnResponse['message'] = "Error while signing up. Please try again.";
 				$returnResponse['data'] = $addUser;
 			}
@@ -150,7 +150,7 @@ class GstController extends Controller{
 				$mailInfo['email'] = $input['email'];
 				$mailInfo['user_id'] = $getUserData[0]->user_id;
 				$mailInfo['forget_password_id'] = $getUserData[0]->forget_password_id;
-				$mail = Mail::send('gst.gstinMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
+				$mail = Mail::send('gst.forgotPasswordMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
 					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
 					$message->to($mailInfo['email'])->subject('MobiGST - Reset Password Link');
 					$message->cc('prajwal.p@mobisofttech.co.in');
@@ -211,7 +211,7 @@ class GstController extends Controller{
 	public function updatepassword(Request $request, $id){
 		$input = $request->all();
 
-		$updatepassword = Gst::updatepassword($input,$id);
+		$updatepassword = Gst::updatepassword($input['password'],$id);
 
 		if($updatepassword > 0){
 			$returnResponse['status'] = "success";
@@ -540,13 +540,12 @@ class GstController extends Controller{
 
 		$res = $csv->setOffset(1)->fetchAll();
 		$key_value=array();
-		$group_id = 1;
-		$user_id = 2;
+		
 		foreach($res as $key => $val){
 			$key_value[$key]['business_id'] = $input['business_id'];
 			$key_value[$key]['unique_id'] = $res[$key][0];
 			$key_value[$key]['contact_type'] = $res[$key][1];
-			$key_value[$key]['business_name'] = $res[$key][2];
+			$key_value[$key]['contact_name'] = $res[$key][2];
 			$key_value[$key]['gstin_no'] = $res[$key][3];
 			$key_value[$key]['contact_person'] = $res[$key][4];
 			$key_value[$key]['email'] = $res[$key][5];
@@ -559,11 +558,27 @@ class GstController extends Controller{
 			$key_value[$key]['pincode'] = $res[$key][12];
 			$key_value[$key]['created_at'] = date('Y-m-d H:i:s');
 		}
-		$key_value;
-		$start_time = date("h:i:sa");
 
+		$states = Gst::getStates();
+		$name = array();
+		foreach ($states as $key => $value) {
+			array_push($name,$value->state_name);
+		}
+
+		foreach($res as $key => $val){
+			if (in_array($res[$key][11], $name)) {
+				
+			}else{
+				$response['status'] = "fail";
+				$response['code'] = 400;
+				$a = 'L'. ($key+2);
+				$response['message'] = "You have error on cell number " . $a . " of your csv. Please write correct state name.";
+				$response['data'] = $val;
+				return view('gst.importContactMsg')->with('data', $response);
+			}
+		}
 		$collection = collect($key_value); 
-		$infoFileInsertedData = Gst::addContactFromCSV($collection->toArray());  
+		$infoFileInsertedData = Gst::addContactFromCSV($collection->toArray());
 		
 		if($infoFileInsertedData){
 			$response['numbers'] = sizeof($collection);
@@ -571,14 +586,13 @@ class GstController extends Controller{
 			$response['code'] = 200;
 			$response['message'] = "OK";
 			$response['data'] = $infoFileInsertedData;
-			$response['strat_time'] = $start_time;
 			$response['end_time'] = date("h:i:sa");
 			unlink($full_url);
 		}else{
 			$response['numbers'] = sizeof($collection);
 			$response['status'] = "fail";
 			$response['code'] = 400;
-			$response['message'] = "Bad Request";
+			$response['message'] = "Something went wrong while uploading file. Please try again.";
 			$response['data'] = $infoFileInsertedData;
 			unlink($full_url);
 		}
@@ -772,7 +786,7 @@ class GstController extends Controller{
 				base_path() . '/public/Contact/', $fileName1
 				);
 			$fileName['item_csv'] = $file1;
-			$input['item_csv']=$file1;
+			$input['item_csv'] = $file1;
 		}
 		$full_url = base_path() . '/public/Contact/'.$fileName1;
 		$csv = Reader::createFromPath($full_url);
@@ -902,6 +916,13 @@ class GstController extends Controller{
 			$returnResponse['data'] = $getData;
 		}
 		return response()->json($returnResponse);
+	}
+
+
+
+	public function select($id){
+		$id = $id;
+		return view('gst.select')->with('data', $id);
 	}
 
 

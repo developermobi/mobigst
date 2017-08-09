@@ -51,7 +51,7 @@
 					@endforeach
 					@else
 					<tr>
-						<td>No Business found. Click on add business button to add one.</td>
+						<td colspan="3">No Business found. Click on add business button to add one.</td>
 					</tr>
 					@endif
 				</tbody>

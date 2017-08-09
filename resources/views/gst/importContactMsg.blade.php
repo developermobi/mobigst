@@ -26,11 +26,14 @@
 					<center>
 						@if($data['code'] == '200')
 						<span style="font-size: 30px; color: #05b902;">
-							{{$data['numbers']}} contacts added successfully. Wait while we redirect you to another page...
+							{{$data['numbers']}} contacts added successfully. 
+							<a href="importcontact">
+								<button class="btn btn-primary" type="button">Click Here</button>
+							</a>go backimport page.
 						</span>
 						@else
 						<span style="font-size: 30px; color: #f12626;">
-							Something went wrong while adding contacts. Please try again.
+							{{$data['message']}}
 						</span>
 						@endif
 					</center>
@@ -42,8 +45,15 @@
 </div>
 
 <script type="text/javascript">
-	var delay = 2000; 
-	setTimeout(function(){ window.location = SERVER_NAME+"/importcontact"; }, delay);
+	/*var delay = 2000; 
+	setTimeout(function(){ window.location = SERVER_NAME+"/importcontact"; }, delay);*/
+	function disableF5(e) { if ((e.which || e.keyCode) == 116 || (e.which || e.keyCode) == 82) e.preventDefault(); };
+	$(document).ready(function() {
+		$("body").on("contextmenu",function(){
+			return false;
+		});
+		$(document).on("keydown", disableF5);
+	});
 </script>
 
 @endsection

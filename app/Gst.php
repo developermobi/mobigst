@@ -101,9 +101,9 @@ class Gst extends Model{
 
 
 	public static function getUserData($input){
-
+		
 		$login = DB::table('user')
-		->where('user_id', $input['user_id'])
+		->where('user_id', $input)
 		->where('status',1)
 		->get();
 
@@ -126,10 +126,11 @@ class Gst extends Model{
 
 
 	public static function updatepassword($data,$id){
-
+		$new_password['password'] = $data;
+		
 		$updateData = DB::table('user')
 		->where('user_id',"=",$id)
-		->update($data);
+		->update($new_password);
 
 		return  $updateData;
 	}
@@ -446,6 +447,16 @@ class Gst extends Model{
 		->update($data);
 
 		return  $updateData;
+	}
+
+
+
+	public static function getStates(){
+
+		$states = DB::table('states')
+		->select('state_name')
+		->get();
+		return $states;
 	}
 
 
