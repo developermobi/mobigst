@@ -98,8 +98,8 @@ Route::get('customerInfo/{id}', [
 	'as' => 'customerInfo/{id}', 'uses' => 'Api\V1\GstController@customerInfo'
 	]);
 
-Route::get('resetPassword/{id,forget_password_id}', [
-	'as' => 'resetPassword/{id,forget_password_id}', 'uses' => 'Api\V1\GstController@resetPassword'
+Route::get('resetPassword/{id}/{forget_password_id}', [
+	'as' => 'resetPassword/{id}/{forget_password_id}', 'uses' => 'Api\V1\GstController@resetPassword'
 	]);
 
 $api->version('v1', function ($api) {

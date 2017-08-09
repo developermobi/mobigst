@@ -150,7 +150,7 @@ class GstController extends Controller{
 				$mailInfo['email'] = $input['email'];
 				$mailInfo['user_id'] = $getUserData[0]->user_id;
 				$mailInfo['forget_password_id'] = $getUserData[0]->forget_password_id;
-				$mail = Mail::send('gst.gstinMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
+				$mail = Mail::send('gst.forgotPasswordMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
 					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
 					$message->to($mailInfo['email'])->subject('MobiGST - Reset Password Link');
 					$message->cc('prajwal.p@mobisofttech.co.in');
@@ -211,7 +211,7 @@ class GstController extends Controller{
 	public function updatepassword(Request $request, $id){
 		$input = $request->all();
 
-		$updatepassword = Gst::updatepassword($input,$id);
+		$updatepassword = Gst::updatepassword($input['password'],$id);
 
 		if($updatepassword > 0){
 			$returnResponse['status'] = "success";

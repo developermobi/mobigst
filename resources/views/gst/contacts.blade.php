@@ -45,8 +45,8 @@
 					@if($data['code'] == '200')
 					<tr>
 						<td>{{$data['data']['received']}}</td>
-						<td>{{$data['data']['unrequested']}}</td>
 						<td>{{$data['data']['requested']}}</td>
+						<td>{{$data['data']['unrequested']}}</td>
 					</tr>
 					@else
 					<tr>

@@ -340,7 +340,7 @@ function updatepassword(){
 			$("#updateCustomer").prop('disabled', true).text('Updating, Please Wait...');
 		},
 		success:function(response){
-			if(response.code == 201){
+			if(response.code == 200){
 				swal({
 					title: "Success !",
 					text: response.message,
