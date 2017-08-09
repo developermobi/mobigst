@@ -80,10 +80,7 @@
 	</div>
 </div>
 
-<<<<<<< HEAD
-<script src="{{URL::asset('app/js/addcustomer.js')}}"></script>
-=======
+
 <script src="{{URL::asset('app/js/customerinfo.js')}}"></script>
->>>>>>> 167cd8badfc953dcbc95dd8dc0fed5a9dfb41fce
 
 @endsection
