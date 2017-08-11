@@ -8,6 +8,7 @@ $api = app('Dingo\Api\Routing\Router');
 
 
 
+
 /*
 |--------------------------------------------------------------------------
 | GST PAGES AND API'S
@@ -100,9 +101,14 @@ Route::get('resetPassword/{id}/{forget_password_id}', [
 	'as' => 'resetPassword/{id}/{forget_password_id}', 'uses' => 'Api\V1\GstController@resetPassword'
 	]);
 
+Route::get('verifyMail/{id}', [
+	'as' => 'verifyMail/{id}', 'uses' => 'Api\V1\GstController@verifyMail'
+	]);
+
 Route::get('select/{id}', [
 	'as' => 'select/{id}', 'uses' => 'Api\V1\GstController@select'
 	]);
+
 
 
 $api->version('v1', function ($api) {
@@ -224,7 +230,6 @@ Route::get('goodsSalesInvoice/{id}', [
 	'as' => 'goodsSalesInvoice/{id}', 'uses' => 'Api\V1\SalesController@goodsSalesInvoice'
 	]);
 
-
 $api->version('v1', function ($api) {
 	$api->get('getContact/{business_id}', 'App\Http\Controllers\Api\V1\SalesController@getContact');
 });
@@ -239,6 +244,10 @@ $api->version('v1', function ($api) {
 
 $api->version('v1', function ($api) {
 	$api->get('getItem/{business_id}', 'App\Http\Controllers\Api\V1\SalesController@getItem');
+});
+
+$api->version('v1', function ($api) {
+	$api->get('getItemInfo/{item_id}', 'App\Http\Controllers\Api\V1\SalesController@getItemInfo');
 });
 
 $api->version('v1', function ($api) {

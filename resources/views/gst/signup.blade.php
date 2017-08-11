@@ -75,7 +75,7 @@
 					</p>
 					<button type="button" id="register" class="btn btn-block btn-info">Join Now</button>
 				</form>
-				<h4>Already have an account? <a href="login">Login</a></h4>
+				<h4>Already have an account ? <a href="login">Login</a></h4>
 			</div>
 			<div class="clearfix"></div>
 		</div>

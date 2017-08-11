@@ -36,9 +36,19 @@ class GstController extends Controller{
 			$addUser = Gst::addUser($data);
 
 			if($addUser > 0){
+
+				$mailInfo = array();
+				$mailInfo['user_id'] = $addUser;
+				$mailInfo['email'] = $input['email'];
+				$mail = Mail::send('gst.verifyMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
+					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
+					$message->to($mailInfo['email'])->subject('MobiGST - Verification Link');
+					//$message->cc('prajwal.p@mobisofttech.co.in');
+				});
+
 				$returnResponse['status'] = "success";
 				$returnResponse['code'] = "201";
-				$returnResponse['message'] = "You have signed up Sucessfully.";
+				$returnResponse['message'] = "You have signed up Sucessfully. We have sent verification mail on your email id. Please verify your account before login.";
 				$returnResponse['data'] = $addUser;
 			}else{
 				$returnResponse['status'] = "failed";
@@ -48,6 +58,26 @@ class GstController extends Controller{
 			}
 		}
 		return response()->json($returnResponse);
+	}
+
+
+
+	public function verifyMail($id){
+		$user_id = decrypt($id);
+		$getData = Gst::verifyMail($user_id);
+		
+		if (sizeof($getData) > 0) {
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "200";
+			$returnResponse['message'] = "Data found.";
+			$returnResponse['data'] = $getData;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "Link expired. Please try again.";
+			$returnResponse['data'] = $getData;
+		}
+		return view('gst.mailVerification')->with('data', $returnResponse);
 	}
 
 
@@ -94,31 +124,38 @@ class GstController extends Controller{
 
 	public function login(Request $request){
 		$input = $request->all();
-
+		
 		$login = Gst::login($input);
 
 		if(sizeof($login) > 0){
-			Session::regenerate();
+			if($login[0]->verify_mail == '1'){
+				Session::regenerate();
 
-			$data['remember_token'] = Session::getId();
-			$data['user_id'] = $login[0]->user_id; 
+				$data['remember_token'] = Session::getId();
+				$data['user_id'] = $login[0]->user_id; 
 
-			$UpdateToken = Gst::updateUserToken($data);
+				$UpdateToken = Gst::updateUserToken($data);
 
-			if($UpdateToken > 0){
-				$login = Gst::login($input);
+				if($UpdateToken > 0){
+					$login = Gst::login($input);
 
-				$returnResponse['status'] = "success";
-				$returnResponse['code'] = "200";
-				$returnResponse['message'] = "You have logged in Sucessfully.";
-				$returnResponse['data'] = $login;
+					$returnResponse['status'] = "success";
+					$returnResponse['code'] = "200";
+					$returnResponse['message'] = "You have logged in Sucessfully.";
+					$returnResponse['data'] = $login;
+				}else{
+					$returnResponse['status'] = "failed";
+					$returnResponse['code'] = "204";
+					$returnResponse['message'] = "Session not generated. Please try again.";
+					$returnResponse['data'] = $login;
+				}
+				return response()->json($returnResponse);
 			}else{
 				$returnResponse['status'] = "failed";
 				$returnResponse['code'] = "204";
-				$returnResponse['message'] = "Session not generated. Please try again.";
+				$returnResponse['message'] = "You have not verified your account. Please check your registered email id for verification link.";
 				$returnResponse['data'] = $login;
 			}
-			return response()->json($returnResponse);
 		}else{
 			$returnResponse['status'] = "failed";
 			$returnResponse['code'] = "204";

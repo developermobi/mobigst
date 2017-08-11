@@ -1,4 +1,4 @@
-var SERVER_NAME = "http://mobigst.mobisofttech.co.in:8989";
+var SERVER_NAME = "http://localhost:8000/";
 
 
 //Create Object of form data

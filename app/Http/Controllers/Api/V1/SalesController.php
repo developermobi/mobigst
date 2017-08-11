@@ -73,10 +73,18 @@ class SalesController extends Controller{
 
 	public function goodsSalesInvoice($id){
 		$gstin_id = decrypt($id);
+
+		$data = array();
 		$getBusinessByGstin = Sales::getBusinessByGstin($gstin_id);
+		$getInvoiceCount = Sales::getInvoiceCount($gstin_id);
+
+		if(sizeof($getInvoiceCount) > 0){
+			$data['invoice_no'] = "INV".($getInvoiceCount[0]->count + 1);
+		}else{
+			$data['invoice_no'] = "INV1";
+		}
 
 		if(sizeof($getBusinessByGstin) > 0){
-			$data = array();
 			$data['gstin_id'] = $gstin_id;
 			$data['business_id'] = $getBusinessByGstin[0]->business_id;
 		}
@@ -155,6 +163,25 @@ class SalesController extends Controller{
 			$returnResponse['code'] = "204";
 			$returnResponse['message'] = "No Content.";
 			$returnResponse['data'] = $getItem;
+		}
+		return $returnResponse;
+	}
+
+
+
+	public function getItemInfo($item_id){
+
+		$getItemInfo = Sales::getItemInfo($item_id);
+		if(sizeof($getItemInfo) > 0){
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "302";
+			$returnResponse['message'] = "Data Found.";
+			$returnResponse['data'] = $getItemInfo;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "No Content.";
+			$returnResponse['data'] = $getItemInfo;
 		}
 		return $returnResponse;
 	}
