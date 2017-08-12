@@ -110,6 +110,7 @@ class Sales extends Model{
 	public static function insertSalesInvoice($salesInvoiceData){
 
 		$salesInvoiceData['created_at'] = date('Y-m-d H:i:s');
+		$salesInvoiceData['created_date'] = date('Y-m-d');
 		$insertSalesInvoice = DB::table('sales_invoice')
 		->insertGetId($salesInvoiceData);
 

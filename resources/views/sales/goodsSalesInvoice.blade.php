@@ -18,6 +18,11 @@
 	.table .form-control{
 		padding: 0px;
 	}
+	@media (min-width: 1200px) {
+		.container {
+			width: 1300px;
+		}
+	}
 </style>
 
 <input type="hidden" id="business_id" value="{{$data['business_id']}}">
@@ -42,7 +47,7 @@
 			<h2>Create Sales Invoice</h2>
 			<div class="table-responsive" style="padding-top: 20px;">
 				<form id="invoiceForm" role="form">
-				<input type="hidden" name="gstin_id" id="gstin_id" value="{{$data['gstin_id']}}">
+					<input type="hidden" name="gstin_id" id="gstin_id" value="{{$data['gstin_id']}}">
 					<table class="table table-bordered">
 						<thead>
 							<tr>
@@ -154,7 +159,7 @@
 								<th rowspan="2" width="20%">ITEM</th>
 								<th rowspan="2">HSN/SAC</th>
 								<th rowspan="2">QTY</th>
-								<th rowspan="2">Rate</th>
+								<th rowspan="2">Cost</th>
 								<th rowspan="2">Discount</th>
 								<th colspan="2">CGST</th>
 								<th colspan="2">SGST</th>
@@ -178,11 +183,11 @@
 							<tr id="t2">
 								<td colspan="5">Total Inv. Val</td>
 								<td><input type="text" class="form-control" name="total_discount" /></td>
-								<td colspan="2"><input type="text" class="form-control" name="total_cgst_amount" /></td>
-								<td colspan="2"><input type="text" class="form-control" name="total_sgst_amount" /></td>
-								<td colspan="2"><input type="text" class="form-control" name="total_igst_amount" /></td>
-								<td colspan="2"><input type="text" class="form-control" name="total_cess_amount" /></td>
-								<td colspan="2"><input type="text" class="form-control" name="total_amount" id="total_amount" /></td>
+								<td colspan="2"><input type="text" class="form-control total_cgst_amount" name="total_cgst_amount" value="0" /></td>
+								<td colspan="2"><input type="text" class="form-control total_sgst_amount" name="total_sgst_amount" value="0" /></td>
+								<td colspan="2"><input type="text" class="form-control total_igst_amount" name="total_igst_amount" value="0" /></td>
+								<td colspan="2"><input type="text" class="form-control total_cess_amount" name="total_cess_amount" value="0" /></td>
+								<td colspan="2"><input type="text" class="form-control" name="total_amount" id="total_amount" value="0" /></td>
 							</tr>
 							<tr>
 								<td colspan="17">
@@ -196,26 +201,26 @@
 							</tr>
 							<tr>
 								<td colspan="5">Tax under Reverse Charge</td>
-								<td><input type="text" class="form-control" id="tt_taxable_value" name="tt_taxable_value" /></td>
-								<td colspan="2"><input type="text" class="form-control" id="tt_cgst_amount" name="tt_cgst_amount" /></td>
-								<td colspan="2"><input type="text" class="form-control" id="tt_sgst_amount" name="tt_sgst_amount" /></td>
-								<td colspan="2"><input type="text" class="form-control" id="tt_igst_amount" name="tt_igst_amount" /></td>
-								<td colspan="2"><input type="text" class="form-control" id="tt_cess_amount" name="tt_cess_amount" /></td>
+								<td><input type="text" class="form-control" id="tt_taxable_value" name="tt_taxable_value" value="0" /></td>
+								<td colspan="2"><input type="text" class="form-control" id="tt_cgst_amount" name="tt_cgst_amount" value="0" /></td>
+								<td colspan="2"><input type="text" class="form-control" id="tt_sgst_amount" name="tt_sgst_amount" value="0" /></td>
+								<td colspan="2"><input type="text" class="form-control" id="tt_igst_amount" name="tt_igst_amount" value="0" /></td>
+								<td colspan="2"><input type="text" class="form-control" id="tt_cess_amount" name="tt_cess_amount" value="0" /></td>
 								<td colspan="2"><input type="text" class="form-control" id="tt_total" name="tt_total" /></td>
 							</tr>
 						</tbody>
 					</table>
 					<table class="table table-bordered">
 						<tr>
-							<td>Total In Words</td>
+							<td width="40%">Total In Words</td>
 							<td>Taxable Amount</td>
 							<td>Total Tax</td>
 							<td>GRAND TOTAL</td>
 						</tr>
 						<tr>
-							<td><input type="text" class="form-control" name="" /></td>
-							<td><input type="text" class="form-control" name="" /></td>
-							<td><input type="text" class="form-control" name="" /></td>
+							<td><input type="text" class="form-control total_in_words" id="total_in_words" /></td>
+							<td><input type="text" class="form-control taxable_amount" id="taxable_amount" /></td>
+							<td><input type="text" class="form-control total_tax" id="total_tax" /></td>
 							<td><input type="text" class="form-control" name="grand_total" id="grand_total" /></td>
 						</tr>
 					</table>
@@ -242,7 +247,6 @@
 
 <script>
 	$(document).ready(function() {
-		new_id = 1;
 		createView();	
 	});
 
@@ -251,17 +255,16 @@
 		var business_id = $("#business_id").val();
 		getItem(business_id);
 
-		var id = new_id;
-		var new_row= '<tr class="abc">'+
+		var new_row= '<tr>'+
 		'<td></td>'+
 		'<td>'+
 		'<select class="form-control item_name" name="item_name" id="item_name"  onchange="getItemInfo(this);calculateTotal(this)">'+
 		'</select>'+
 		'</td>'+
 		'<td><input type="text" class="form-control" name="hsn_sac_no" id="hsn_sac_no"/></td>'+
-		'<td><input type="text" class="form-control" name="quantity" id="quantity" value="1"/></td>'+
-		'<td><input type="text" class="form-control rate" name="rate" id="rate"/></td>'+
-		'<td><input type="text" class="form-control" name="discount" id="discount"/></td>'+
+		'<td><input type="text" class="form-control quantity" name="quantity" id="quantity" value="1" onkeyup="calculateQuantity(this)"/></td>'+
+		'<td><input type="text" class="form-control rate" name="rate" id="rate" value="0"/><input type="hidden" class="form-control item_value" name="item_value" id="item_value" value="0"/></td>'+
+		'<td><input type="text" class="form-control discount" name="discount" id="discount" value="0"/></td>'+
 		'<td>'+
 		'<select class="form-control cgst_percentage" name="cgst_percentage" id="cgst_percentage" onchange="calCgstAmount(this);">'+
 		'<option value="0" selected>0</option>'+
@@ -299,17 +302,46 @@
 		'</td>'+
 		'<td><input type="text" class="form-control igst_amount" name="igst_amount" id="igst_amount" value="0"  disabled/></td>'+
 		'<td><input type="text" class="form-control cess_percentage" name="cess_percentage" onkeyup="calculateCESS(this)" value="0"/></td>'+
-		'<td><input type="text" class="form-control cess_amount" name="cess_amount" /></td>'+
+		'<td><input type="text" class="form-control cess_amount" name="cess_amount" value="0"/></td>'+
 		'<td><input type="text" class="form-control total" name="total" id="total"/></td>'+
 		'<td><i class="fa fa-trash-o ibtnDel"></i></td>'+
 		'</tr>';
 
 		$("#t2").before(new_row); 
-		new_id++;
 		
 		$(document).ready(function() {
 			$(".item_name").select2();
 		});
+
+		var place_of_supply = $("#place_of_supply").val();
+		var customer_state = $("#customer_state").val();
+		if(place_of_supply == customer_state){
+			$(".cgst_percentage").val('0');
+			$(".cgst_percentage").prop('disabled', false);
+			$(".cgst_amount").val('0');
+			$(".cgst_amount").prop('disabled', false);
+			$(".sgst_percentage").val('0');
+			$(".sgst_percentage").prop('disabled', false);
+			$(".sgst_amount").val('0');
+			$(".sgst_amount").prop('disabled', false);
+			$(".igst_percentage").val('0');
+			$(".igst_percentage").prop('disabled', true);
+			$(".igst_amount").val('0');
+			$(".igst_amount").prop('disabled', true);
+		}else{
+			$(".cgst_percentage").val('0');
+			$(".cgst_percentage").prop('disabled', true);
+			$(".cgst_amount").val('0');
+			$(".cgst_amount").prop('disabled', true);
+			$(".sgst_percentage").val('0');
+			$(".sgst_percentage").prop('disabled', true);
+			$(".sgst_amount").val('0');
+			$(".sgst_amount").prop('disabled', true);
+			$(".igst_percentage").val('0');
+			$(".igst_percentage").prop('disabled', false);
+			$(".igst_amount").val('0');
+			$(".igst_amount").prop('disabled', false);
+		}
 	}
 
 	$("table.order-list").on("click", ".ibtnDel", function (event) {

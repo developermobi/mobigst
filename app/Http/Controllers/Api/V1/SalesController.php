@@ -58,7 +58,6 @@ class SalesController extends Controller{
 			$returnResponse['message'] = "No Data Found.";
 			$returnResponse['data'] = '';
 		}
-
 		return view('sales.sales')->with('data', $returnResponse);
 	}
 
@@ -211,19 +210,19 @@ class SalesController extends Controller{
 		$salesInvoiceData['sh_state'] = $input['sh_state'];
 		$salesInvoiceData['sh_country'] = $input['sh_country'];
 		$salesInvoiceData['total_discount'] = $input['total_discount'];
-		$salesInvoiceData['total_cgst_amount'] = $input['total_cgst_amount'];
-		$salesInvoiceData['total_sgst_amount'] = $input['total_sgst_amount'];
-		$salesInvoiceData['total_igst_amount'] = $input['total_igst_amount'];
-		$salesInvoiceData['total_cess_amount'] = $input['total_cess_amount'];
+		$salesInvoiceData['total_cgst_amount'] = isset($input['total_cgst_amount']) ? $input['total_cgst_amount'] : "0";
+		$salesInvoiceData['total_sgst_amount'] = isset($input['total_sgst_amount']) ? $input['total_sgst_amount'] : "0";
+		$salesInvoiceData['total_igst_amount'] = isset($input['total_igst_amount']) ? $input['total_igst_amount'] : "0";
+		$salesInvoiceData['total_cess_amount'] = isset($input['total_cess_amount']) ? $input['total_cess_amount'] : "0";
 		$salesInvoiceData['total_amount'] = $input['total_amount'];
-		$salesInvoiceData['tt_taxable_value'] = $input['tt_taxable_value'];
-		$salesInvoiceData['tt_cgst_amount'] = $input['tt_cgst_amount'];
-		$salesInvoiceData['tt_sgst_amount'] = $input['tt_sgst_amount'];
-		$salesInvoiceData['tt_igst_amount'] = $input['tt_igst_amount'];
-		$salesInvoiceData['tt_cess_amount'] = $input['tt_cess_amount'];
-		$salesInvoiceData['tt_total'] = $input['tt_total'];
+		$salesInvoiceData['tt_taxable_value'] = isset($input['tt_taxable_value']) ? $input['tt_taxable_value'] : "0";
+		$salesInvoiceData['tt_cgst_amount'] = isset($input['tt_cgst_amount']) ? $input['tt_cgst_amount'] : "0";
+		$salesInvoiceData['tt_sgst_amount'] = isset($input['tt_sgst_amount']) ? $input['tt_sgst_amount'] : "0";
+		$salesInvoiceData['tt_igst_amount'] = isset($input['tt_igst_amount']) ? $input['tt_igst_amount'] : "0";
+		$salesInvoiceData['tt_cess_amount'] = isset($input['tt_cess_amount']) ? $input['tt_cess_amount'] : "0";
+		$salesInvoiceData['tt_total'] = isset($input['tt_total']) ? $input['tt_total'] : "0";
 		$salesInvoiceData['grand_total'] = $input['grand_total'];
-
+		
 		$insertSalesInvoice = Sales::insertSalesInvoice($salesInvoiceData);
 		if($insertSalesInvoice > 0){
 			$invoiceDetailData = array();
@@ -238,7 +237,7 @@ class SalesController extends Controller{
 					$invoiceDetailData['quantity'] = $input['quantity'][$key];
 					$invoiceDetailData['rate'] = $input['rate'][$key];
 					$invoiceDetailData['discount'] = $input['discount'][$key];
-					$invoiceDetailData['cgst_percentage'] = $input['cgst_percentage'][$key];
+					$invoiceDetailData['cgst_percentage'] = isset($input['cgst_percentage'][$key]) ? $input['cgst_percentage'][$key] : "0";
 					$invoiceDetailData['cgst_amount'] = $input['cgst_amount'][$key];
 					$invoiceDetailData['sgst_percentage'] = $input['sgst_percentage'][$key];
 					$invoiceDetailData['sgst_amount'] = $input['sgst_amount'][$key];
