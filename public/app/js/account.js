@@ -1,7 +1,6 @@
 $(function(){
 
 	if (typeof $.cookie('token') === 'undefined' && typeof $.cookie('tokenId') === 'undefined'){
-		//window.location.href = SERVER_NAME+"/login";
 	} else {
 		window.location.href = SERVER_NAME+"/welcome";
 	}

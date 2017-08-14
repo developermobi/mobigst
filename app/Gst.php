@@ -24,9 +24,21 @@ class Gst extends Model{
 		$input['created_at'] = date('Y-m-d H:i:s');
 
 		$addUser = DB::table('user')
-		->insert($input);
+		->insertGetId($input);
 
 		return $addUser;
+	}
+
+
+
+	public static function verifyMail($user_id){
+
+		$data['verify_mail'] = '1';
+		$verifyMail = DB::table('user')
+		->where('user_id',"=",$user_id)
+		->update($data);
+
+		return  $verifyMail;
 	}
 
 
@@ -447,6 +459,16 @@ class Gst extends Model{
 		->update($data);
 
 		return  $updateData;
+	}
+
+
+
+	public static function getStates(){
+
+		$states = DB::table('states')
+		->select('state_name')
+		->get();
+		return $states;
 	}
 
 

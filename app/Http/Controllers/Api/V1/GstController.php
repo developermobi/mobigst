@@ -36,18 +36,48 @@ class GstController extends Controller{
 			$addUser = Gst::addUser($data);
 
 			if($addUser > 0){
+
+				$mailInfo = array();
+				$mailInfo['user_id'] = $addUser;
+				$mailInfo['email'] = $input['email'];
+				$mail = Mail::send('gst.verifyMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
+					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
+					$message->to($mailInfo['email'])->subject('MobiGST - Verification Link');
+					//$message->cc('prajwal.p@mobisofttech.co.in');
+				});
+
 				$returnResponse['status'] = "success";
 				$returnResponse['code'] = "201";
-				$returnResponse['message'] = "You have signed up Sucessfully.";
+				$returnResponse['message'] = "You have signed up Sucessfully. We have sent verification mail on your email id. Please verify your account before login.";
 				$returnResponse['data'] = $addUser;
 			}else{
 				$returnResponse['status'] = "failed";
-				$returnResponse['code'] = "302";
+				$returnResponse['code'] = "400";
 				$returnResponse['message'] = "Error while signing up. Please try again.";
 				$returnResponse['data'] = $addUser;
 			}
 		}
 		return response()->json($returnResponse);
+	}
+
+
+
+	public function verifyMail($id){
+		$user_id = decrypt($id);
+		$getData = Gst::verifyMail($user_id);
+		
+		if (sizeof($getData) > 0) {
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "200";
+			$returnResponse['message'] = "Data found.";
+			$returnResponse['data'] = $getData;
+		}else{
+			$returnResponse['status'] = "success";
+			$returnResponse['code'] = "204";
+			$returnResponse['message'] = "Link expired. Please try again.";
+			$returnResponse['data'] = $getData;
+		}
+		return view('gst.mailVerification')->with('data', $returnResponse);
 	}
 
 
@@ -94,31 +124,38 @@ class GstController extends Controller{
 
 	public function login(Request $request){
 		$input = $request->all();
-
+		
 		$login = Gst::login($input);
 
 		if(sizeof($login) > 0){
-			Session::regenerate();
+			if($login[0]->verify_mail == '1'){
+				Session::regenerate();
 
-			$data['remember_token'] = Session::getId();
-			$data['user_id'] = $login[0]->user_id; 
+				$data['remember_token'] = Session::getId();
+				$data['user_id'] = $login[0]->user_id; 
 
-			$UpdateToken = Gst::updateUserToken($data);
+				$UpdateToken = Gst::updateUserToken($data);
 
-			if($UpdateToken > 0){
-				$login = Gst::login($input);
+				if($UpdateToken > 0){
+					$login = Gst::login($input);
 
-				$returnResponse['status'] = "success";
-				$returnResponse['code'] = "200";
-				$returnResponse['message'] = "You have logged in Sucessfully.";
-				$returnResponse['data'] = $login;
+					$returnResponse['status'] = "success";
+					$returnResponse['code'] = "200";
+					$returnResponse['message'] = "You have logged in Sucessfully.";
+					$returnResponse['data'] = $login;
+				}else{
+					$returnResponse['status'] = "failed";
+					$returnResponse['code'] = "204";
+					$returnResponse['message'] = "Session not generated. Please try again.";
+					$returnResponse['data'] = $login;
+				}
+				return response()->json($returnResponse);
 			}else{
 				$returnResponse['status'] = "failed";
 				$returnResponse['code'] = "204";
-				$returnResponse['message'] = "Session not generated. Please try again.";
+				$returnResponse['message'] = "You have not verified your account. Please check your registered email id for verification link.";
 				$returnResponse['data'] = $login;
 			}
-			return response()->json($returnResponse);
 		}else{
 			$returnResponse['status'] = "failed";
 			$returnResponse['code'] = "204";
@@ -540,13 +577,12 @@ class GstController extends Controller{
 
 		$res = $csv->setOffset(1)->fetchAll();
 		$key_value=array();
-		$group_id = 1;
-		$user_id = 2;
+		
 		foreach($res as $key => $val){
 			$key_value[$key]['business_id'] = $input['business_id'];
 			$key_value[$key]['unique_id'] = $res[$key][0];
 			$key_value[$key]['contact_type'] = $res[$key][1];
-			$key_value[$key]['business_name'] = $res[$key][2];
+			$key_value[$key]['contact_name'] = $res[$key][2];
 			$key_value[$key]['gstin_no'] = $res[$key][3];
 			$key_value[$key]['contact_person'] = $res[$key][4];
 			$key_value[$key]['email'] = $res[$key][5];
@@ -559,11 +595,27 @@ class GstController extends Controller{
 			$key_value[$key]['pincode'] = $res[$key][12];
 			$key_value[$key]['created_at'] = date('Y-m-d H:i:s');
 		}
-		$key_value;
-		$start_time = date("h:i:sa");
 
+		$states = Gst::getStates();
+		$name = array();
+		foreach ($states as $key => $value) {
+			array_push($name,$value->state_name);
+		}
+
+		foreach($res as $key => $val){
+			if (in_array($res[$key][11], $name)) {
+				
+			}else{
+				$response['status'] = "fail";
+				$response['code'] = 400;
+				$a = 'L'. ($key+2);
+				$response['message'] = "You have error on cell number " . $a . " of your csv. Please write correct state name.";
+				$response['data'] = $val;
+				return view('gst.importContactMsg')->with('data', $response);
+			}
+		}
 		$collection = collect($key_value); 
-		$infoFileInsertedData = Gst::addContactFromCSV($collection->toArray());  
+		$infoFileInsertedData = Gst::addContactFromCSV($collection->toArray());
 		
 		if($infoFileInsertedData){
 			$response['numbers'] = sizeof($collection);
@@ -571,14 +623,13 @@ class GstController extends Controller{
 			$response['code'] = 200;
 			$response['message'] = "OK";
 			$response['data'] = $infoFileInsertedData;
-			$response['strat_time'] = $start_time;
 			$response['end_time'] = date("h:i:sa");
 			unlink($full_url);
 		}else{
 			$response['numbers'] = sizeof($collection);
 			$response['status'] = "fail";
 			$response['code'] = 400;
-			$response['message'] = "Bad Request";
+			$response['message'] = "Something went wrong while uploading file. Please try again.";
 			$response['data'] = $infoFileInsertedData;
 			unlink($full_url);
 		}
@@ -772,7 +823,7 @@ class GstController extends Controller{
 				base_path() . '/public/Contact/', $fileName1
 				);
 			$fileName['item_csv'] = $file1;
-			$input['item_csv']=$file1;
+			$input['item_csv'] = $file1;
 		}
 		$full_url = base_path() . '/public/Contact/'.$fileName1;
 		$csv = Reader::createFromPath($full_url);
@@ -902,6 +953,13 @@ class GstController extends Controller{
 			$returnResponse['data'] = $getData;
 		}
 		return response()->json($returnResponse);
+	}
+
+
+
+	public function select($id){
+		$id = $id;
+		return view('gst.select')->with('data', $id);
 	}
 
 

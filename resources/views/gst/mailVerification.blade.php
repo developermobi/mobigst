@@ -26,14 +26,19 @@
 					<center>
 						@if($data['code'] == '200')
 						<span style="font-size: 30px; color: #05b902;">
-							{{$data['numbers']}} contacts added successfully. 
-							<a href="importcontact">
-								<button class="btn btn-primary" type="button">Click Here</button>
-							</a>go backimport page.
+							Account verification successfull.  
+							<a href="../login" target="_blank">
+								<button class="btn btn-success">Click here</button>
+							</a>
+							 to go to login page.
 						</span>
 						@else
 						<span style="font-size: 30px; color: #f12626;">
-							{{$data['message']}}
+							You have alredy verified your account. 
+							<a href="../login" target="_blank">
+								<button class="btn btn-success">Click here</button>
+							</a>
+							 to go to login page.
 						</span>
 						@endif
 					</center>
@@ -44,16 +49,5 @@
 	</div>
 </div>
 
-<script type="text/javascript">
-	/*var delay = 2000; 
-	setTimeout(function(){ window.location = SERVER_NAME+"/importcontact"; }, delay);*/
-	function disableF5(e) { if ((e.which || e.keyCode) == 116 || (e.which || e.keyCode) == 82) e.preventDefault(); };
-	$(document).ready(function() {
-		$("body").on("contextmenu",function(){
-			return false;
-		});
-		$(document).on("keydown", disableF5);
-	});
-</script>
 
 @endsection
