@@ -209,7 +209,7 @@ class SalesController extends Controller{
 		$salesInvoiceData['sh_city'] = $input['sh_city'];
 		$salesInvoiceData['sh_state'] = $input['sh_state'];
 		$salesInvoiceData['sh_country'] = $input['sh_country'];
-		$salesInvoiceData['total_discount'] = $input['total_discount'];
+		$salesInvoiceData['total_discount'] = isset($input['total_discount']) ? $input['total_discount'] : "0";
 		$salesInvoiceData['total_cgst_amount'] = isset($input['total_cgst_amount']) ? $input['total_cgst_amount'] : "0";
 		$salesInvoiceData['total_sgst_amount'] = isset($input['total_sgst_amount']) ? $input['total_sgst_amount'] : "0";
 		$salesInvoiceData['total_igst_amount'] = isset($input['total_igst_amount']) ? $input['total_igst_amount'] : "0";
@@ -225,6 +225,20 @@ class SalesController extends Controller{
 		
 		$insertSalesInvoice = Sales::insertSalesInvoice($salesInvoiceData);
 		if($insertSalesInvoice > 0){
+
+			$getIC = Sales::getIC($input['gstin_id']);
+			if(sizeof($getIC) > 0){
+				$count_data = array();
+				$count_data['gstin_id'] = $input['gstin_id'];
+				$count_data['count'] = $getIC[0]->count + 1;
+				$updateIC = Sales::updateIC($count_data);
+			}else{
+				$add_count_data = array();
+				$add_count_data['gstin_id'] = $input['gstin_id'];
+				$add_count_data['count'] = '1';
+				$addIC = Sales::addIC($add_count_data);
+			}
+
 			$invoiceDetailData = array();
 
 			if(is_array($input['total'])){
@@ -262,14 +276,14 @@ class SalesController extends Controller{
 				$invoiceDetailData['quantity'] = $input['quantity'];
 				$invoiceDetailData['rate'] = $input['rate'];
 				$invoiceDetailData['discount'] = $input['discount'];
-				$invoiceDetailData['cgst_percentage'] = isset($input['cgst_percentage'][$key]) ? $input['cgst_percentage'][$key] : "0";
-				$invoiceDetailData['cgst_amount'] = isset($input['cgst_amount'][$key]) ? $input['cgst_amount'][$key] : "0";
-				$invoiceDetailData['sgst_percentage'] = isset($input['sgst_percentage'][$key]) ? $input['sgst_percentage'][$key] : "0";
-				$invoiceDetailData['sgst_amount'] = isset($input['sgst_amount'][$key]) ? $input['sgst_amount'][$key] : "0";
-				$invoiceDetailData['igst_percentage'] = isset($input['igst_percentage'][$key]) ? $input['igst_percentage'][$key] : "0";
-				$invoiceDetailData['igst_amount'] = isset($input['igst_amount'][$key]) ? $input['igst_amount'][$key] : "0";
-				$invoiceDetailData['cess_percentage'] = isset($input['cess_percentage'][$key]) ? $input['cess_percentage'][$key] : "0";
-				$invoiceDetailData['cess_amount'] = isset($input['cess_amount'][$key]) ? $input['cess_amount'][$key] : "0";
+				$invoiceDetailData['cgst_percentage'] = isset($input['cgst_percentage']) ? $input['cgst_percentage'] : "0";
+				$invoiceDetailData['cgst_amount'] = isset($input['cgst_amount']) ? $input['cgst_amount'] : "0";
+				$invoiceDetailData['sgst_percentage'] = isset($input['sgst_percentage']) ? $input['sgst_percentage'] : "0";
+				$invoiceDetailData['sgst_amount'] = isset($input['sgst_amount']) ? $input['sgst_amount'] : "0";
+				$invoiceDetailData['igst_percentage'] = isset($input['igst_percentage']) ? $input['igst_percentage'] : "0";
+				$invoiceDetailData['igst_amount'] = isset($input['igst_amount']) ? $input['igst_amount'] : "0";
+				$invoiceDetailData['cess_percentage'] = isset($input['cess_percentage']) ? $input['cess_percentage'] : "0";
+				$invoiceDetailData['cess_amount'] = isset($input['cess_amount']) ? $input['cess_amount'] : "0";
 				$invoiceDetailData['total'] = $input['total'];
 				$insertInvoiceDetails = Sales::insertInvoiceDetails($invoiceDetailData);
 

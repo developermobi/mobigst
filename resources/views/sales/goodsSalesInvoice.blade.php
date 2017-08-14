@@ -155,7 +155,7 @@
 					<table class="table table-bordered order-list">
 						<thead>
 							<tr>
-								<th rowspan="2">SR. NO.</th>
+								<!-- <th rowspan="2">SR. NO.</th> -->
 								<th rowspan="2" width="20%">ITEM</th>
 								<th rowspan="2">HSN/SAC</th>
 								<th rowspan="2">QTY</th>
@@ -182,7 +182,7 @@
 						<tbody>
 							<tr id="t2">
 								<td colspan="5">Total Inv. Val</td>
-								<td><input type="text" class="form-control" name="total_discount" /></td>
+								<!-- <td><input type="text" class="form-control" name="total_discount" /></td> -->
 								<td colspan="2"><input type="text" class="form-control total_cgst_amount" name="total_cgst_amount" value="0" /></td>
 								<td colspan="2"><input type="text" class="form-control total_sgst_amount" name="total_sgst_amount" value="0" /></td>
 								<td colspan="2"><input type="text" class="form-control total_igst_amount" name="total_igst_amount" value="0" /></td>
@@ -256,15 +256,14 @@
 		getItem(business_id);
 
 		var new_row= '<tr>'+
-		'<td></td>'+
 		'<td>'+
 		'<select class="form-control item_name" name="item_name" id="item_name"  onchange="getItemInfo(this);calculateTotal(this)">'+
 		'</select>'+
 		'</td>'+
 		'<td><input type="text" class="form-control" name="hsn_sac_no" id="hsn_sac_no"/></td>'+
 		'<td><input type="text" class="form-control quantity" name="quantity" id="quantity" value="1" onkeyup="calculateQuantity(this)"/></td>'+
-		'<td><input type="text" class="form-control rate" name="rate" id="rate" value="0"/><input type="hidden" class="form-control item_value" name="item_value" id="item_value" value="0"/></td>'+
-		'<td><input type="text" class="form-control discount" name="discount" id="discount" value="0"/></td>'+
+		'<td><input type="text" class="form-control rate" name="rate" id="rate" value="0" onkeyup="calculateCost(this)"/><input type="hidden" class="form-control item_value" name="item_value" id="item_value" value="0"/></td>'+
+		'<td><input type="text" class="form-control discount" name="discount" id="discount" value="0" onkeyup="calculateDiscount(this)"/></td>'+
 		'<td>'+
 		'<select class="form-control cgst_percentage" name="cgst_percentage" id="cgst_percentage" onchange="calCgstAmount(this);">'+
 		'<option value="0" selected>0</option>'+
@@ -290,7 +289,7 @@
 		'</td>'+
 		'<td><input type="text" class="form-control sgst_amount" name="sgst_amount" id="sgst_amount" value="0"/></td>'+
 		'<td>'+
-		'<select class="form-control igst_percentage" name="igst_percentage" id="igst_percentage" disabled>'+
+		'<select class="form-control igst_percentage" name="igst_percentage" id="igst_percentage" onchange="calCgstAmount(this);" disabled>'+
 		'<option value="0" selected>0</option>'+
 		'<option value="0.125">0.125</option>'+
 		'<option value="1.5">1.5</option>'+
@@ -304,11 +303,30 @@
 		'<td><input type="text" class="form-control cess_percentage" name="cess_percentage" onkeyup="calculateCESS(this)" value="0"/></td>'+
 		'<td><input type="text" class="form-control cess_amount" name="cess_amount" value="0"/></td>'+
 		'<td><input type="text" class="form-control total" name="total" id="total"/></td>'+
-		'<td><i class="fa fa-trash-o ibtnDel"></i></td>'+
+		'<td><i class="fa fa-trash-o ibtnDel" onclick="deleteRow(this);"></i></td>'+
 		'</tr>';
 
 		$("#t2").before(new_row); 
-		
+
+		var place_of_supply = $("#place_of_supply").val();
+		var customer_state = $("#customer_state").val();
+
+		if(place_of_supply != customer_state){
+			$(".cgst_percentage").prop('disabled', true);
+			$(".cgst_amount").prop('disabled', true);
+			$(".sgst_percentage").prop('disabled', true);
+			$(".sgst_amount").prop('disabled', true);
+			$(".igst_percentage").prop('disabled', false);
+			$(".igst_amount").prop('disabled', false);
+		}else{
+			$(".cgst_percentage").prop('disabled', false);
+			$(".cgst_amount").prop('disabled', false);
+			$(".sgst_percentage").prop('disabled', false);
+			$(".sgst_amount").prop('disabled', false);
+			$(".igst_percentage").prop('disabled', true);
+			$(".igst_amount").prop('disabled', true);
+		}
+
 		$(document).ready(function() {
 			$(".item_name").select2();
 		});
@@ -328,36 +346,6 @@
 	$(document).ready(function() {
 		$(".item_name").select2();
 	});
-
-	var place_of_supply = $("#place_of_supply").val();
-		var customer_state = $("#customer_state").val();
-		if(place_of_supply == customer_state){
-			$(".cgst_percentage").val('0');
-			$(".cgst_percentage").prop('disabled', false);
-			$(".cgst_amount").val('0');
-			$(".cgst_amount").prop('disabled', false);
-			$(".sgst_percentage").val('0');
-			$(".sgst_percentage").prop('disabled', false);
-			$(".sgst_amount").val('0');
-			$(".sgst_amount").prop('disabled', false);
-			$(".igst_percentage").val('0');
-			$(".igst_percentage").prop('disabled', true);
-			$(".igst_amount").val('0');
-			$(".igst_amount").prop('disabled', true);
-		}else{
-			$(".cgst_percentage").val('0');
-			$(".cgst_percentage").prop('disabled', true);
-			$(".cgst_amount").val('0');
-			$(".cgst_amount").prop('disabled', true);
-			$(".sgst_percentage").val('0');
-			$(".sgst_percentage").prop('disabled', true);
-			$(".sgst_amount").val('0');
-			$(".sgst_amount").prop('disabled', true);
-			$(".igst_percentage").val('0');
-			$(".igst_percentage").prop('disabled', false);
-			$(".igst_amount").val('0');
-			$(".igst_amount").prop('disabled', false);
-		}
 </script>
 
 <script src="{{URL::asset('app/js/salesinvoice.js')}}"></script>

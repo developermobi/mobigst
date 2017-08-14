@@ -128,4 +128,33 @@ class Sales extends Model{
 		return $insertInvoiceDetails;
 	}
 
+
+
+	public static function getIC($gstin_id){
+		$getIC = DB::table('invoice_count')
+		->where('gstin_id',$gstin_id)
+		->get();
+
+		return $getIC;
+	}
+
+
+
+	public static function updateIC($data){
+		$updateData = DB::table('invoice_count')
+		->where('gstin_id', $data['gstin_id'])
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
+	public static function addIC($input){
+		$addIC = DB::table('invoice_count')
+		->insert($input);
+
+		return $addIC;
+	}
+
 }

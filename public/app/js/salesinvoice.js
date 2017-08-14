@@ -24,11 +24,11 @@ $(function(){
 
 	$(".item_name").change(function(event){
 		var place_of_supply = $("#place_of_supply").val();
-		/*if(place_of_supply == ''){
+		if(place_of_supply == ''){
 			alert('Please select place of supply first');
 			$(".item_name").val('');
-			$(".item_name").prop('disabled', true);
-		}*/
+			//$(".item_name").prop('disabled', true);
+		}
 	});
 
 	$(".place_of_supply").change(function(event){
@@ -324,6 +324,13 @@ function calCgstAmount(obj){
 	var sgst_amount = (rate / 100) * sgst_percentage;
 	sgst_amount_element.val(sgst_amount);
 
+	var igst_percentage_element = $(obj).closest("tr").find(".igst_percentage");
+	var igst_percentage = igst_percentage_element.val();
+
+	var igst_amount_element = $(obj).closest("tr").find(".igst_amount");
+	var igst_amount = (rate / 100) * igst_percentage;
+	igst_amount_element.val(igst_amount);
+
 	var cess_percentage_element = $(obj).closest("tr").find(".cess_percentage");
 	var cess_percentage = cess_percentage_element.val();
 
@@ -332,7 +339,7 @@ function calCgstAmount(obj){
 	cess_amount_element.val(cess_amount);
 
 	var total_element = $(obj).closest("tr").find(".total");
-	total_element.val(parseInt(rate) + parseInt(cgst_amount) + parseInt(sgst_amount) + parseInt(cess_amount));
+	total_element.val(parseFloat(rate) + parseFloat(cgst_amount) + parseFloat(sgst_amount) + parseFloat(igst_amount) + parseFloat(cess_amount));
 
 	calculateTotal(obj);
 }
@@ -389,30 +396,104 @@ function calculateQuantity(obj){
 
 
 
+function calculateDiscount(obj){
+	var discount = $(obj).closest("tr").find(".discount").val();
+
+	if(discount != ''){
+		var rate_element = $(obj).closest("tr").find(".rate");
+		var rate = rate_element.val();
+		var amount = (rate / 100) * discount;
+		var new_rate = parseFloat(rate) - parseFloat(amount);
+		rate_element.val(new_rate);
+
+		var cgst_amount_element = $(obj).closest("tr").find(".cgst_amount");
+		var cgst_amount = cgst_amount_element.val();
+		var new_cgst_amount = cgst_amount_element.val(cgst_amount*discount);
+
+		var sgst_amount_element = $(obj).closest("tr").find(".sgst_amount");
+		var sgst_amount = sgst_amount_element.val();
+		var new_sgst_amount = sgst_amount_element.val(sgst_amount*discount);
+
+		var igst_amount_element = $(obj).closest("tr").find(".igst_amount");
+		var igst_amount = igst_amount_element.val();
+		var new_igst_amount = igst_amount_element.val(igst_amount*discount);
+
+		var cess_amount_element = $(obj).closest("tr").find(".cess_amount");
+		var cess_amount = cess_amount_element.val();
+		var cess_igst_amount = cess_amount_element.val(cess_amount*discount);
+
+		calCgstAmount(obj);
+		calculateTotal(obj);
+	}
+}
+
+
+
+function calculateCost(obj){
+	var rate = $(obj).closest("tr").find(".rate").val();
+
+	if(rate != ''){
+
+		var rate_element = $(obj).closest("tr").find(".rate");
+		var item_value_element = $(obj).closest("tr").find(".item_value");
+		rate_element.val(rate);
+		item_value_element.val(rate);
+
+		calCgstAmount(obj);
+
+		var cgst_amount_element = $(obj).closest("tr").find(".cgst_amount");
+		var cgst_amount = cgst_amount_element.val();
+		var new_cgst_amount = cgst_amount_element.val(cgst_amount*discount);
+
+		var sgst_amount_element = $(obj).closest("tr").find(".sgst_amount");
+		var sgst_amount = sgst_amount_element.val();
+		var new_sgst_amount = sgst_amount_element.val(sgst_amount*discount);
+
+		var igst_amount_element = $(obj).closest("tr").find(".igst_amount");
+		var igst_amount = igst_amount_element.val();
+		var new_igst_amount = igst_amount_element.val(igst_amount*discount);
+
+		var cess_amount_element = $(obj).closest("tr").find(".cess_amount");
+		var cess_amount = cess_amount_element.val();
+		var cess_igst_amount = cess_amount_element.val(cess_amount*discount);
+
+		calCgstAmount(obj);
+		calculateTotal(obj);
+	}
+}
+
+
+
+function deleteRow(obj){
+	calculateTotal(obj);
+}
+
+
+
 function calculateTotal(obj){
 	var rate_sum = 0;
 	$(".rate").each(function(){
-		rate_sum = rate_sum + parseInt($(this).val());
+		rate_sum = rate_sum + parseFloat($(this).val());
 	});
 
 	var cgst_amount_sum = 0;
 	$(".cgst_amount").each(function(){
-		cgst_amount_sum = cgst_amount_sum + parseInt($(this).val());
+		cgst_amount_sum = cgst_amount_sum + parseFloat($(this).val());
 	});
 
 	var sgst_amount_sum = 0;
 	$(".sgst_amount").each(function(){
-		sgst_amount_sum = sgst_amount_sum + parseInt($(this).val());
+		sgst_amount_sum = sgst_amount_sum + parseFloat($(this).val());
 	});
 
 	var igst_amount_sum = 0;
 	$(".igst_amount").each(function(){
-		igst_amount_sum = igst_amount_sum + parseInt($(this).val());
+		igst_amount_sum = igst_amount_sum + parseFloat($(this).val());
 	});
 
 	var cess_amount_sum = 0;
 	$(".cess_amount").each(function(){
-		cess_amount_sum = cess_amount_sum + parseInt($(this).val());
+		cess_amount_sum = cess_amount_sum + parseFloat($(this).val());
 	});
 
 	$(".total_cgst_amount").val(cgst_amount_sum);
@@ -420,11 +501,11 @@ function calculateTotal(obj){
 	$(".total_igst_amount").val(igst_amount_sum);
 	$(".total_cess_amount").val(cess_amount_sum);
 
-	$("#total_tax").val(parseInt(cgst_amount_sum) + parseInt(sgst_amount_sum) + parseInt(cess_amount_sum) + parseInt(igst_amount_sum));
-	$("#total_amount").val(parseInt(cgst_amount_sum) + parseInt(sgst_amount_sum) + parseInt(cess_amount_sum) + parseInt(rate_sum) + parseInt(igst_amount_sum));
+	$("#total_tax").val(parseFloat(cgst_amount_sum) + parseFloat(sgst_amount_sum) + parseFloat(cess_amount_sum) + parseFloat(igst_amount_sum));
+	$("#total_amount").val(parseFloat(cgst_amount_sum) + parseFloat(sgst_amount_sum) + parseFloat(cess_amount_sum) + parseFloat(rate_sum) + parseFloat(igst_amount_sum));
 	var total_in_words = number2text($("#total_amount").val());
 	$("#total_in_words").val(total_in_words);
-	$("#grand_total").val(parseInt(cgst_amount_sum) + parseInt(sgst_amount_sum) + parseInt(cess_amount_sum) + parseInt(rate_sum) + parseInt(igst_amount_sum));
+	$("#grand_total").val(parseFloat(cgst_amount_sum) + parseFloat(sgst_amount_sum) + parseFloat(cess_amount_sum) + parseFloat(rate_sum) + parseFloat(igst_amount_sum));
 }
 
 
@@ -452,12 +533,13 @@ function saveSalesInvoice(){
 		success:function(response){
 			if(response.code == 201){
 				swal({
+					title: "Success !",
 					text: response.message,
 					type: "success",
 					confirmButtonText: "OK",
 					width:'400px',
 				}).then(function () {
-					window.location.href = window.location.href;
+					window.location.reload();
 				});
 			}else{
 				swal({

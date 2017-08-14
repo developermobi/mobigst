@@ -272,7 +272,6 @@ function forgotpassword(){
 			$("#forgotButton").prop('disabled', true).text('Please Wait...');
 		},
 		success:function(response){
-			
 			if(response.code == 200){
 				swal({
 					text: response.message,

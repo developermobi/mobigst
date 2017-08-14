@@ -25,7 +25,7 @@
 		<h2>List Of Items</h2>
 		<div class="row" style="padding: 15px 0px;">
 			<div class="col-md-12">
-				<a href="addItem"><button class="btn btn-success" style="float: left;"> Add Item </button></a>
+				<a href="addservices"><button class="btn btn-success" style="float: left;"> Add Item </button></a>
 			</div>
 		</div>
 		<div class="table-responsive">
