@@ -1,9 +1,8 @@
-item_sku,item_type,item_hsn_sac,"item_description
-",item_unit,item_sale_price,item_purchase_price,"item_discount
-","item_notes
+Item SKU,Item Type,Item HSN SAC,Item Description,Item Unit,Item Sale Price,Item Purchase Price,"Item Discount
+","Item Notes
 "
-10001,G,1019010,Description,Mtr,1000,700,10,Notes
-10002,G,1019020,Description,Mtr,1000,700,10,Notes
-10003,G,1019090,Description,Mtr,1000,700,10,Notes
-10004,G,1011020,Description,Mtr,1000,700,10,Notes
-10005,G,1011010,Description,Mtr,1000,700,10,Notes
+10001,G,1019010,Bulk SMS,qt,100000,,5,Notes
+10002,S,1019020,Amazon Prime,qt,50,25000,6,Notes
+10003,G,1019090,Transactional SMS,qt,250000,60000,7,Notes
+10004,S,1011020,Microsoft office,qt,10,120000,9,Notes
+10005,G,1011010,Adobe Photoshop,qt,150,2500000,10,Notes
