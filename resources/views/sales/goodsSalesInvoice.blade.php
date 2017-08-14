@@ -312,8 +312,24 @@
 		$(document).ready(function() {
 			$(".item_name").select2();
 		});
+	}
 
-		var place_of_supply = $("#place_of_supply").val();
+	$("table.order-list").on("click", ".ibtnDel", function (event) {
+		var count = 0;
+		$('input[name=hsn_sac_no]').each(function(){
+			count++;
+		});
+		if(count == 1 || count < 1){
+			return false;
+		}
+		$(this).closest("tr").remove();
+	});
+
+	$(document).ready(function() {
+		$(".item_name").select2();
+	});
+
+	var place_of_supply = $("#place_of_supply").val();
 		var customer_state = $("#customer_state").val();
 		if(place_of_supply == customer_state){
 			$(".cgst_percentage").val('0');
@@ -342,22 +358,6 @@
 			$(".igst_amount").val('0');
 			$(".igst_amount").prop('disabled', false);
 		}
-	}
-
-	$("table.order-list").on("click", ".ibtnDel", function (event) {
-		var count = 0;
-		$('input[name=hsn_sac_no]').each(function(){
-			count++;
-		});
-		if(count == 1 || count < 1){
-			return false;
-		}
-		$(this).closest("tr").remove();
-	});
-
-	$(document).ready(function() {
-		$(".item_name").select2();
-	});
 </script>
 
 <script src="{{URL::asset('app/js/salesinvoice.js')}}"></script>

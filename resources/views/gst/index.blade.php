@@ -30,7 +30,7 @@
 					</div>
 					<h4>Free GST <br>Bill book</h4>
 					<a href="bill_book">
-						<button type="button" class="btn-block btn-info">prepare free bills</button>
+						<button type="button" class="btn-block btn-info" disabled>prepare free bills</button>
 					</a>
 					<p>
 						prepare GST compliant invoics using GST Billbook for FREE for you and your 
@@ -45,7 +45,7 @@
 					</div>
 					<h4>GST Enterprise software</h4>
 					<a href="quotation">
-						<button type="button" class="btn-block btn-info">get quotation</button>
+						<button type="button" class="btn-block btn-info" disabled>get quotation</button>
 					</a>
 					<p>
 						Cloud based GST Software for Enerprises. Simply GST Returns, generate GST compliant
