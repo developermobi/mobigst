@@ -15,8 +15,11 @@
 		font-weight: 400;
 		color: #d24c2d !important;
 	}
-	table td {
+	table td{
 		cursor: pointer;
+	}
+	table tr:hover{
+		background-color: #ffec65 !important;
 	}
 </style>
 

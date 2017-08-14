@@ -195,7 +195,7 @@ class GstController extends Controller{
 				if($mail != ''){
 					$returnResponse['status'] = "success";
 					$returnResponse['code'] = "200";
-					$returnResponse['message'] = "Password reset link sent to your eamil id.";
+					$returnResponse['message'] = "Password reset link sent to your email id.";
 					$returnResponse['data'] = $findemsilid;
 				}else{
 					$returnResponse['status'] = "failed";
@@ -212,7 +212,7 @@ class GstController extends Controller{
 		}else{
 			$returnResponse['status'] = "failed";
 			$returnResponse['code'] = "204";
-			$returnResponse['message'] = "Your email id is not registered with us. Please check your email id.";
+			$returnResponse['message'] = "Your email id is not registered with us. First sign Up.";
 			$returnResponse['data'] = $findemsilid;
 		}
 		return response()->json($returnResponse);

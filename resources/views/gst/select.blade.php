@@ -28,7 +28,7 @@
 						<div class="class-text  hvr-bounce-to-bottom">
 							<h4>Sales Invoices</h4>
 							<p>(Outward billing)</p>
-							<a href="javascript:void();">
+							<a href="../sales/{{$data}}">
 								<button class="btn btn-danger btn-block" type="button">Work on Sales Invoices</button>
 							</a>
 						</div>
@@ -38,7 +38,7 @@
 						<div class="class-text  hvr-bounce-to-bottom">
 							<h4>Purchase Invoices</h4>
 							<p>(Inward supply)</p>
-							<a href="javascript:void();">
+							<a href="../purchase/{{$data}}">
 								<button class="btn btn-warning btn-block" type="button">Work on Purchase Invoices</button>
 							</a>
 						</div>

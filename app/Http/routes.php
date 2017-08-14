@@ -247,6 +247,10 @@ $api->version('v1', function ($api) {
 });
 
 $api->version('v1', function ($api) {
+	$api->get('getItemInfo/{item_id}', 'App\Http\Controllers\Api\V1\SalesController@getItemInfo');
+});
+
+$api->version('v1', function ($api) {
 	$api->post('saveSalesInvoice', 'App\Http\Controllers\Api\V1\SalesController@saveSalesInvoice');
 });
 

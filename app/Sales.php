@@ -37,6 +37,17 @@ class Sales extends Model{
 
 
 
+	public static function getInvoiceCount($gstin_id){
+
+		$business = DB::table('invoice_count')
+		->where('gstin_id',$gstin_id)
+		->get();
+
+		return $business;
+	}
+
+
+
 	public static function getContact($business_id){
 
 		$contact = DB::table('contact')
@@ -84,9 +95,22 @@ class Sales extends Model{
 
 
 
+	public static function getItemInfo($item_id){
+
+		$getItemInfo = DB::table('item')
+		->where('item_id',$item_id)
+		->where('status',1)
+		->get();
+
+		return $getItemInfo;
+	}
+
+
+
 	public static function insertSalesInvoice($salesInvoiceData){
 
 		$salesInvoiceData['created_at'] = date('Y-m-d H:i:s');
+		$salesInvoiceData['created_date'] = date('Y-m-d');
 		$insertSalesInvoice = DB::table('sales_invoice')
 		->insertGetId($salesInvoiceData);
 

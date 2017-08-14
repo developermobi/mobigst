@@ -1,6 +1,5 @@
 var SERVER_NAME = "http://mobigst.mobisofttech.co.in:8989";
 
-
 //Create Object of form data
 (function ($) {
 	$.fn.serializeFormJSON = function () {
