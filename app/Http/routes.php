@@ -109,6 +109,10 @@ Route::get('select/{id}', [
 	'as' => 'select/{id}', 'uses' => 'Api\V1\GstController@select'
 	]);
 
+Route::get('/importError', function () {
+	return view('gst.importError');
+});
+
 
 
 $api->version('v1', function ($api) {
@@ -218,6 +222,7 @@ $api->version('v1', function ($api) {
 |--------------------------------------------------------------------------
 */
 
+
 Route::get('sales/{id}', [
 	'as' => 'sales/{id}', 'uses' => 'Api\V1\SalesController@sales'
 	]);
@@ -228,6 +233,10 @@ Route::get('selectSalesInvoice/{id}', [
 
 Route::get('goodsSalesInvoice/{id}', [
 	'as' => 'goodsSalesInvoice/{id}', 'uses' => 'Api\V1\SalesController@goodsSalesInvoice'
+	]);
+
+Route::get('sales/editSalesInvoice/{id}', [
+	'as' => 'sales/editSalesInvoice/{id}', 'uses' => 'Api\V1\SalesController@editSalesInvoice'
 	]);
 
 $api->version('v1', function ($api) {
@@ -252,6 +261,18 @@ $api->version('v1', function ($api) {
 
 $api->version('v1', function ($api) {
 	$api->post('saveSalesInvoice', 'App\Http\Controllers\Api\V1\SalesController@saveSalesInvoice');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('cancelInvoice/{id}', 'App\Http\Controllers\Api\V1\SalesController@cancelInvoice');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('deleteInvoiceDetail/{id}', 'App\Http\Controllers\Api\V1\SalesController@deleteInvoiceDetail');
+});
+
+$api->version('v1', function ($api) {
+	$api->post('updateSalesInvoice/{si_id}', 'App\Http\Controllers\Api\V1\SalesController@updateSalesInvoice');
 });
 
 

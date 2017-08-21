@@ -28,7 +28,7 @@
 						<div class="col-md-6">
 							<div class="form-group">
 								<label for="custname">Select Business</label>
-								<select class="selectpicker form-control dynamicBusiness" name="business_id">
+								<select class="selectpicker form-control dynamicBusiness" name="business_id" required>
 								</select>
 							</div>
 						</div>
@@ -37,7 +37,7 @@
 						<div class="col-md-6">
 							<div class="form-group">
 								<label for="item_description">Item Description<span>*</span> :</label>
-								<input type="text" class="form-control" placeholder="Item Description" name="item_description">
+								<input type="text" class="form-control" placeholder="Item Description" name="item_description" required>
 							</div>
 							<div class="form-group">
 								<label for="item_type">Item Type:</label>
@@ -49,7 +49,7 @@
 							</div>
 							<div class="form-group">
 								<label for="purpr">Purchase Price:</label>
-								<input type="text" class="form-control" placeholder="Purchase Price" name="item_purchase_price">
+								<input type="text" class="form-control" placeholder="Purchase Price" name="item_purchase_price" required>
 							</div>
 						</div>
 						<div class="col-md-6">
@@ -63,7 +63,7 @@
 							</div>
 							<div class="form-group">
 								<label for="selling">Selling Price:</label>
-								<input type="text" class="form-control" placeholder="Enter Selling Price" name="item_sale_price">
+								<input type="text" class="form-control" placeholder="Enter Selling Price" name="item_sale_price" required>
 							</div>
 							
 							<div class="form-group">
@@ -76,8 +76,8 @@
 						<label for="note">Item Notes:</label>
 						<textarea class="form-control" rows="5"  placeholder="Enter Item Notes" name="item_notes"></textarea>
 					</div>
-					<button type="submit" class="btn btn-danger">Back</button>
-					<button type="submit" class="btn btn-default">Cancel</button>
+					<button type="button" onclick="history.back();" class="btn btn-danger">Back</button>
+					<!-- <button type="submit" class="btn btn-default">Cancel</button> -->
 					<button type="submit" class="btn btn-success" id="addItem">Save</button>
 				</form>
 			</div>

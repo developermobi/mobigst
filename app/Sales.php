@@ -37,13 +37,24 @@ class Sales extends Model{
 
 
 
-	public static function getInvoiceCount($gstin_id){
+	public static function getSalesInvoiceCount($gstin_id){
 
 		$business = DB::table('invoice_count')
 		->where('gstin_id',$gstin_id)
+		->where('invoice_type',1)
 		->get();
 
 		return $business;
+	}
+
+
+
+	public static function getGstinInfo($gstin_id){
+		$getGstinInfo = DB::table('gstin')
+		->where('gstin_id',$gstin_id)
+		->get();
+
+		return $getGstinInfo;
 	}
 
 
@@ -157,4 +168,85 @@ class Sales extends Model{
 		return $addIC;
 	}
 
+
+
+	public static function cancelInvoice($business_id){
+
+		$data['status'] = '0';
+		$updateData = DB::table('sales_invoice')
+		->where('si_id', $business_id)
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
+	public static function getSalesInvoiceData($si_id){
+		
+		$getData = DB::table('sales_invoice')
+		->where('si_id',$si_id)
+		->where('status',1)
+		->get();
+
+		return $getData;
+	}
+
+
+
+	public static function getInvoiceDetail($invoice_no){
+		
+		$getData = DB::table('invoice_details')
+		->where('invoice_no',$invoice_no)
+		->where('status',1)
+		->get();
+
+		return $getData;
+	}
+
+
+
+	public static function deleteInvoiceDetail($id_no){
+
+		$data['status'] = '0';
+		$updateData = DB::table('invoice_details')
+		->where('id_no', $id_no)
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
+	public static function updateSalesInvoice($data,$si_id){
+
+		$updateData = DB::table('sales_invoice')
+		->where('si_id', $si_id)
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
+	public static function updateInvoiceDetails($data,$id_no){
+		
+		$updateData = DB::table('invoice_details')
+		->where('id_no', $id_no)
+		->update($data);
+
+		return  $updateData;
+	}
+
+
+
+	public static function deleteInvoiceDetailBySiId($invoice_no){
+		
+		$data['status'] = '0';
+		$updateData = DB::table('invoice_details')
+		->where('invoice_no', $invoice_no)
+		->update($data);
+
+		return  $updateData;
+	}
 }

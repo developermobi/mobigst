@@ -6,16 +6,27 @@ $(function(){
 
 	$('#addBusinessButton').click(function(){
 		addBusiness();
-		//alert();
 	});
 
 	$('#addGstinButton').click(function(){
 		addGstin();
 	});
 
-	/*jQuery.validator.addMethod("gstin", function(value, element) {
-		return this.optional( element ) || /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test( value );
-	}, 'Please enter a valid gstin number.');*/
+	$('#cancelBusinessButton').click(function(){
+		$('#businessForm').trigger("reset");
+	});
+
+	$('#cancelGstinButton').click(function(){
+		$('#gstinForm').trigger("reset");
+	});
+
+	jQuery.validator.addMethod("gstin", function(value, element) {
+		return this.optional( element ) || /^([0][1-9]|[1-2][0-9]|[3][0-7])([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/.test( value );
+	}, 'Please enter a valid gstin number.');
+
+	jQuery.validator.addMethod("pan", function(value, element) {
+		return this.optional( element ) || /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test( value );
+	}, 'Please enter a valid pan number.');
 
 	$("#businessForm").validate({
 		rules: {    
@@ -24,10 +35,11 @@ $(function(){
 			},
 			pan_no:{
 				required: true,
+				pan:true,
 			},
 			gstin_no:{
 				required: true,
-				//gstin:true,
+				gstin:true,
 			},
 			display_name:{
 				required: true,
@@ -46,6 +58,7 @@ $(function(){
 		rules: {    
 			gstin_no:{
 				required: true,
+				gstin:true,
 			},
 			display_name:{
 				required: true,

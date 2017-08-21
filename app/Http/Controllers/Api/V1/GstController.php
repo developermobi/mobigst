@@ -43,7 +43,6 @@ class GstController extends Controller{
 				$mail = Mail::send('gst.verifyMail',['mailInfo' => $mailInfo], function($message) use ($mailInfo){
 					$message->from('no-reply@mobisofttech.co.in', 'Mobi GST');
 					$message->to($mailInfo['email'])->subject('MobiGST - Verification Link');
-					//$message->cc('prajwal.p@mobisofttech.co.in');
 				});
 
 				$returnResponse['status'] = "success";
@@ -312,38 +311,48 @@ class GstController extends Controller{
 	public function addBusiness(Request $request){
 		$input = $request->all();
 
-		$business_data = array();
-		$business_data['user_id'] = $request->cookie('tokenId');
-		$business_data['name'] = $input['name'];
-		$business_data['pan'] = $input['pan_no'];
+		$stateCode = substr($input['gstin_no'], 0, 2);
+		$getStateInfo = Gst::getStateInfo($stateCode);
 
-		$addBusiness = Gst::addBusiness($business_data);
+		if(sizeof($getStateInfo) > 0){
+			$business_data = array();
+			$business_data['user_id'] = $request->cookie('tokenId');
+			$business_data['name'] = $input['name'];
+			$business_data['pan'] = $input['pan_no'];
 
-		if($addBusiness > 0){
-
-			$gstin_data = array();
-			$gstin_data['business_id'] = $addBusiness;
-			$gstin_data['gstin_no'] = $input['gstin_no'];
-			$gstin_data['display_name'] = $input['display_name'];
-
-			$addBusiness = Gst::addGstin($gstin_data);
+			$addBusiness = Gst::addBusiness($business_data);
 
 			if($addBusiness > 0){
-				$returnResponse['status'] = "success";
-				$returnResponse['code'] = "201";
-				$returnResponse['message'] = "Business added Sucessfully.";
-				$returnResponse['data'] = $addBusiness;
+
+				$gstin_data = array();
+				$gstin_data['business_id'] = $addBusiness;
+				$gstin_data['gstin_no'] = $input['gstin_no'];
+				$gstin_data['display_name'] = $input['display_name'];
+
+				$addBusiness = Gst::addGstin($gstin_data);
+
+				if($addBusiness > 0){
+					$returnResponse['status'] = "success";
+					$returnResponse['code'] = "201";
+					$returnResponse['message'] = "Business added Sucessfully.";
+					$returnResponse['data'] = $addBusiness;
+				}else{
+					$returnResponse['status'] = "failed";
+					$returnResponse['code'] = "302";
+					$returnResponse['message'] = "Error while adding business. Please try again.";
+					$returnResponse['data'] = $addBusiness;
+				}
 			}else{
 				$returnResponse['status'] = "failed";
 				$returnResponse['code'] = "302";
 				$returnResponse['message'] = "Error while adding business. Please try again.";
-				$returnResponse['data'] = $addBusiness;
+				$returnResponse['data'] = $addUser;
 			}
 		}else{
 			$returnResponse['status'] = "failed";
 			$returnResponse['code'] = "302";
-			$returnResponse['message'] = "Error while adding business. Please try again.";
-			$returnResponse['data'] = $addUser;
+			$returnResponse['message'] = "GSTIN number is not valid. Plaese check your gstin number.";
+			$returnResponse['data'] = '';
 		}
 		return response()->json($returnResponse);
 	}
@@ -352,19 +361,31 @@ class GstController extends Controller{
 
 	public function addGstin(Request $request){
 		$input = $request->all();
-		
-		$addGstin = Gst::addGstin($input);
 
-		if($addGstin > 0){
-			$returnResponse['status'] = "success";
-			$returnResponse['code'] = "201";
-			$returnResponse['message'] = "GSTIN number added Sucessfully.";
-			$returnResponse['data'] = $addGstin;
+		$stateCode = substr($input['gstin_no'], 0, 2);
+		$getStateInfo = Gst::getStateInfo($stateCode);
+		
+		if(sizeof($getStateInfo) > 0){
+			$input['state_name'] = $getStateInfo[0]->state_name;
+			$input['state_code'] = $getStateInfo[0]->state_code;
+			$addGstin = Gst::addGstin($input);
+
+			if($addGstin > 0){
+				$returnResponse['status'] = "success";
+				$returnResponse['code'] = "201";
+				$returnResponse['message'] = "GSTIN number added Sucessfully.";
+				$returnResponse['data'] = $addGstin;
+			}else{
+				$returnResponse['status'] = "failed";
+				$returnResponse['code'] = "302";
+				$returnResponse['message'] = "Error while adding gstin no. Please try again.";
+				$returnResponse['data'] = $addGstin;
+			}
 		}else{
 			$returnResponse['status'] = "failed";
 			$returnResponse['code'] = "302";
-			$returnResponse['message'] = "Error while adding gstin no. Please try again.";
-			$returnResponse['data'] = $addGstin;
+			$returnResponse['message'] = "GSTIN number is not valid. Plaese check your gstin number.";
+			$returnResponse['data'] = '';
 		}
 		return response()->json($returnResponse);
 	}
@@ -556,84 +577,120 @@ class GstController extends Controller{
 	public function importContactFile(Request $request){	
 
 		$input = $request->all();
-		if(isset($input['contact_csv'])){
+		try{
+			if(isset($input['contact_csv'])){
 
-			$file1 = $input['contact_csv'];
-			
-			$file_name1 = basename($file1->getClientOriginalName(), '.'.$file1->getClientOriginalExtension());
-			$fileName1 = $file_name1.time().'.'.$file1->getClientOriginalExtension();
-			$fileName1 = str_replace(' ', '', $fileName1);
-			$fileName1 = preg_replace('/\s+/', '', $fileName1);
-			$file_upload1 = $file1->move(
-				base_path() . '/public/Contact/', $fileName1
-				);
-			$fileName['contact_csv'] = $file1;
-			$input['contact_csv']=$file1;
-		}
-		$full_url = base_path() . '/public/Contact/'.$fileName1;
-		$csv = Reader::createFromPath($full_url);
+				$file1 = $input['contact_csv'];
 
-		$headers = $csv->fetchOne();
+				$file_name1 = basename($file1->getClientOriginalName(), '.'.$file1->getClientOriginalExtension());
+				$fileName1 = $file_name1.time().'.'.$file1->getClientOriginalExtension();
+				$fileName1 = str_replace(' ', '', $fileName1);
+				$fileName1 = preg_replace('/\s+/', '', $fileName1);
+				$file_upload1 = $file1->move(
+					base_path() . '/public/Contact/', $fileName1
+					);
+				$fileName['contact_csv'] = $file1;
+				$input['contact_csv']=$file1;
+			}
+			$full_url = base_path() . '/public/Contact/'.$fileName1;
+			$csv = Reader::createFromPath($full_url);
 
-		$res = $csv->setOffset(1)->fetchAll();
-		$key_value=array();
-		
-		foreach($res as $key => $val){
-			$key_value[$key]['business_id'] = $input['business_id'];
-			$key_value[$key]['unique_id'] = $res[$key][0];
-			$key_value[$key]['contact_type'] = $res[$key][1];
-			$key_value[$key]['contact_name'] = $res[$key][2];
-			$key_value[$key]['gstin_no'] = $res[$key][3];
-			$key_value[$key]['contact_person'] = $res[$key][4];
-			$key_value[$key]['email'] = $res[$key][5];
-			$key_value[$key]['pan_no'] = $res[$key][6];
-			$key_value[$key]['phone_no'] = $res[$key][7];
-			$key_value[$key]['alternate_no'] = $res[$key][8];
-			$key_value[$key]['address'] = $res[$key][9];
-			$key_value[$key]['city'] = $res[$key][10];
-			$key_value[$key]['state'] = $res[$key][11];
-			$key_value[$key]['pincode'] = $res[$key][12];
-			$key_value[$key]['created_at'] = date('Y-m-d H:i:s');
-		}
+			$headers = $csv->fetchOne();
 
-		$states = Gst::getStates();
-		$name = array();
-		foreach ($states as $key => $value) {
-			array_push($name,$value->state_name);
-		}
+			$res = $csv->setOffset(1)->fetchAll();
+			$key_value=array();
 
-		foreach($res as $key => $val){
-			if (in_array($res[$key][11], $name)) {
-				
+			foreach($res as $key => $val){
+				$key_value[$key]['business_id'] = $input['business_id'];
+				$key_value[$key]['unique_id'] = $res[$key][0];
+				$key_value[$key]['contact_type'] = $res[$key][1];
+				$key_value[$key]['contact_name'] = $res[$key][2];
+				$key_value[$key]['gstin_no'] = $res[$key][3];
+				$key_value[$key]['contact_person'] = $res[$key][4];
+				$key_value[$key]['email'] = $res[$key][5];
+				$key_value[$key]['pan_no'] = $res[$key][6];
+				$key_value[$key]['phone_no'] = $res[$key][7];
+				$key_value[$key]['alternate_no'] = $res[$key][8];
+				$key_value[$key]['address'] = $res[$key][9];
+				$key_value[$key]['city'] = $res[$key][10];
+				$key_value[$key]['state'] = $res[$key][11];
+				$key_value[$key]['pincode'] = $res[$key][12];
+				$key_value[$key]['created_at'] = date('Y-m-d H:i:s');
+			}
+
+			$states = Gst::getStates();
+			$name = array();
+			foreach ($states as $key => $value) {
+				array_push($name,$value->state_name);
+			}
+
+			/*CHECK STATE NAME*/
+			foreach($res as $key => $val){
+				if (in_array($res[$key][11], $name)) {
+
+				}else{
+					$response['status'] = "fail";
+					$response['code'] = 400;
+					$a = 'L'. ($key+2);
+					$response['message'] = "You have error on cell number " . $a . " of your csv. Please write correct state name.";
+					$response['data'] = $val;
+					return view('gst.importContactMsg')->with('data', $response);
+				}
+			}
+
+			/*CHECK GSTIN*/
+			foreach($res as $key => $val){
+				$validateGstin = Gst::checkGstin($res[$key][3]);
+				if ($validateGstin > 0) {
+
+				}else{
+					$response['status'] = "fail";
+					$response['code'] = 400;
+					$a = 'D'. ($key+2);
+					$response['message'] = "You have error on cell number " . $a . " of your csv. Please check your GSTIN.";
+					$response['data'] = $val;
+					return view('gst.importContactMsg')->with('data', $response);
+				}
+			}
+
+			/*CHECK PAN*/
+			foreach($res as $key => $val){
+				$validatePan = Gst::checkPan($res[$key][6]);
+				if ($validatePan > 0) {
+
+				}else{
+					$response['status'] = "fail";
+					$response['code'] = 400;
+					$a = 'G'. ($key+2);
+					$response['message'] = "You have error on cell number " . $a . " of your csv. Please check your PAN.";
+					$response['data'] = $val;
+					return view('gst.importContactMsg')->with('data', $response);
+				}
+			}
+
+			$collection = collect($key_value); 
+			$infoFileInsertedData = Gst::addContactFromCSV($collection->toArray());
+
+			if($infoFileInsertedData){
+				$response['numbers'] = sizeof($collection);
+				$response['status'] = "success";
+				$response['code'] = 200;
+				$response['message'] = "OK";
+				$response['data'] = $infoFileInsertedData;
+				$response['end_time'] = date("h:i:sa");
+				unlink($full_url);
 			}else{
+				$response['numbers'] = sizeof($collection);
 				$response['status'] = "fail";
 				$response['code'] = 400;
-				$a = 'L'. ($key+2);
-				$response['message'] = "You have error on cell number " . $a . " of your csv. Please write correct state name.";
-				$response['data'] = $val;
-				return view('gst.importContactMsg')->with('data', $response);
+				$response['message'] = "Something went wrong while uploading file. Please try again.";
+				$response['data'] = $infoFileInsertedData;
+				unlink($full_url);
 			}
-		}
-		$collection = collect($key_value); 
-		$infoFileInsertedData = Gst::addContactFromCSV($collection->toArray());
-		
-		if($infoFileInsertedData){
-			$response['numbers'] = sizeof($collection);
-			$response['status'] = "success";
-			$response['code'] = 200;
-			$response['message'] = "OK";
-			$response['data'] = $infoFileInsertedData;
-			$response['end_time'] = date("h:i:sa");
-			unlink($full_url);
-		}else{
-			$response['numbers'] = sizeof($collection);
-			$response['status'] = "fail";
-			$response['code'] = 400;
-			$response['message'] = "Something went wrong while uploading file. Please try again.";
-			$response['data'] = $infoFileInsertedData;
-			unlink($full_url);
-		}
-		return view('gst.importContactMsg')->with('data', $response);
+			return view('gst.importContactMsg')->with('data', $response);
+		}catch (\Exception $e){
+			return \Redirect::to('importError');
+		} 
 	}
 
 
@@ -811,66 +868,70 @@ class GstController extends Controller{
 	public function importItemFile(Request $request){	
 
 		$input = $request->all();
-		if(isset($input['item_csv'])){
+		try{
+			if(isset($input['item_csv'])){
 
-			$file1 = $input['item_csv'];
-			
-			$file_name1 = basename($file1->getClientOriginalName(), '.'.$file1->getClientOriginalExtension());
-			$fileName1 = $file_name1.time().'.'.$file1->getClientOriginalExtension();
-			$fileName1 = str_replace(' ', '', $fileName1);
-			$fileName1 = preg_replace('/\s+/', '', $fileName1);
-			$file_upload1 = $file1->move(
-				base_path() . '/public/Contact/', $fileName1
-				);
-			$fileName['item_csv'] = $file1;
-			$input['item_csv'] = $file1;
-		}
-		$full_url = base_path() . '/public/Contact/'.$fileName1;
-		$csv = Reader::createFromPath($full_url);
+				$file1 = $input['item_csv'];
 
-		$headers = $csv->fetchOne();
+				$file_name1 = basename($file1->getClientOriginalName(), '.'.$file1->getClientOriginalExtension());
+				$fileName1 = $file_name1.time().'.'.$file1->getClientOriginalExtension();
+				$fileName1 = str_replace(' ', '', $fileName1);
+				$fileName1 = preg_replace('/\s+/', '', $fileName1);
+				$file_upload1 = $file1->move(
+					base_path() . '/public/Contact/', $fileName1
+					);
+				$fileName['item_csv'] = $file1;
+				$input['item_csv'] = $file1;
+			}
+			$full_url = base_path() . '/public/Contact/'.$fileName1;
+			$csv = Reader::createFromPath($full_url);
 
-		$res = $csv->setOffset(1)->fetchAll();
-		$key_value=array();
-		$group_id = 1;
-		$user_id = 2;
-		foreach($res as $key => $val){
-			$key_value[$key]['business_id'] = $input['business_id'];
-			$key_value[$key]['item_sku'] = $res[$key][0];
-			$key_value[$key]['item_type'] = $res[$key][1];
-			$key_value[$key]['item_hsn_sac'] = $res[$key][2];
-			$key_value[$key]['item_description'] = $res[$key][3];
-			$key_value[$key]['item_unit'] = $res[$key][4];
-			$key_value[$key]['item_sale_price'] = $res[$key][5];
-			$key_value[$key]['item_purchase_price'] = $res[$key][6];
-			$key_value[$key]['item_discount'] = $res[$key][7];
-			$key_value[$key]['item_notes'] = $res[$key][8];
-			$key_value[$key]['created_at'] = date('Y-m-d H:i:s');
-		}
-		$key_value;
-		$start_time = date("h:i:sa");
+			$headers = $csv->fetchOne();
 
-		$collection = collect($key_value); 
-		$infoFileInsertedData = Gst::addItemFromCSV($collection->toArray());  
-		
-		if($infoFileInsertedData){
-			$response['numbers'] = sizeof($collection);
-			$response['status'] = "success";
-			$response['code'] = 200;
-			$response['message'] = "OK";
-			$response['data'] = $infoFileInsertedData;
-			$response['strat_time'] = $start_time;
-			$response['end_time'] = date("h:i:sa");
-			unlink($full_url);
-		}else{
-			$response['numbers'] = sizeof($collection);
-			$response['status'] = "fail";
-			$response['code'] = 400;
-			$response['message'] = "Bad Request";
-			$response['data'] = $infoFileInsertedData;
-			unlink($full_url);
-		}
-		return view('gst.importmsg')->with('data', $response);
+			$res = $csv->setOffset(1)->fetchAll();
+			$key_value=array();
+			$group_id = 1;
+			$user_id = 2;
+			foreach($res as $key => $val){
+				$key_value[$key]['business_id'] = $input['business_id'];
+				$key_value[$key]['item_sku'] = $res[$key][0];
+				$key_value[$key]['item_type'] = $res[$key][1];
+				$key_value[$key]['item_hsn_sac'] = $res[$key][2];
+				$key_value[$key]['item_description'] = $res[$key][3];
+				$key_value[$key]['item_unit'] = $res[$key][4];
+				$key_value[$key]['item_sale_price'] = $res[$key][5];
+				$key_value[$key]['item_purchase_price'] = $res[$key][6];
+				$key_value[$key]['item_discount'] = $res[$key][7];
+				$key_value[$key]['item_notes'] = $res[$key][8];
+				$key_value[$key]['created_at'] = date('Y-m-d H:i:s');
+			}
+			$key_value;
+			$start_time = date("h:i:sa");
+
+			$collection = collect($key_value); 
+			$infoFileInsertedData = Gst::addItemFromCSV($collection->toArray());  
+
+			if($infoFileInsertedData){
+				$response['numbers'] = sizeof($collection);
+				$response['status'] = "success";
+				$response['code'] = 200;
+				$response['message'] = "OK";
+				$response['data'] = $infoFileInsertedData;
+				$response['strat_time'] = $start_time;
+				$response['end_time'] = date("h:i:sa");
+				unlink($full_url);
+			}else{
+				$response['numbers'] = sizeof($collection);
+				$response['status'] = "fail";
+				$response['code'] = 400;
+				$response['message'] = "Bad Request";
+				$response['data'] = $infoFileInsertedData;
+				unlink($full_url);
+			}
+			return view('gst.importmsg')->with('data', $response);
+		}catch (\Exception $e){
+			return \Redirect::to('importError');
+		} 
 	}
 
 

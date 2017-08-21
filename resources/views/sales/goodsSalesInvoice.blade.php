@@ -76,8 +76,9 @@
 								</thead>
 								<tbody>
 									<tr>
-										<td>
-											<select class="form-control contact_name" name="contact_name" onchange="getContactInfo(this);">
+										<td id="tddd">
+											<select class="form-control contact_name" id="contact_name" name="contact_name" onchange="getContactInfo(this);">
+												<option></option>
 											</select>
 										</td>
 									</tr>
@@ -94,7 +95,7 @@
 										<select class="form-control place_of_supply" name="place_of_supply" id="place_of_supply">
 										</select>
 									</td>
-									<input type="hidden" id="customer_state" value="">
+									<input type="hidden" id="customer_state" value="{{$data['state_name']}}">
 								</tr>
 							</table>
 							<p><input type="checkbox" id="same_address"> Shipping Address is Same as billing address</p>
@@ -218,9 +219,9 @@
 							<td>GRAND TOTAL</td>
 						</tr>
 						<tr>
-							<td><input type="text" class="form-control total_in_words" id="total_in_words" /></td>
+							<td><input type="text" class="form-control total_in_words" id="total_in_words" name="total_in_words" /></td>
 							<td><input type="text" class="form-control taxable_amount" id="taxable_amount" /></td>
-							<td><input type="text" class="form-control total_tax" id="total_tax" /></td>
+							<td><input type="text" class="form-control total_tax" id="total_tax" name="total_tax" /></td>
 							<td><input type="text" class="form-control" name="grand_total" id="grand_total" /></td>
 						</tr>
 					</table>
@@ -303,7 +304,7 @@
 		'<td><input type="text" class="form-control cess_percentage" name="cess_percentage" onkeyup="calculateCESS(this)" value="0"/></td>'+
 		'<td><input type="text" class="form-control cess_amount" name="cess_amount" value="0"/></td>'+
 		'<td><input type="text" class="form-control total" name="total" id="total"/></td>'+
-		'<td><i class="fa fa-trash-o ibtnDel" onclick="deleteRow(this);"></i></td>'+
+		'<td><i class="fa fa-trash-o ibtnDel"></i></td>'+
 		'</tr>';
 
 		$("#t2").before(new_row); 
@@ -341,11 +342,17 @@
 			return false;
 		}
 		$(this).closest("tr").remove();
+		calCgstAmount(this);
+		calculateTotal(this);
 	});
 
 	$(document).ready(function() {
 		$(".item_name").select2();
 	});
+
+	/*$('.item_name').on('change',function(){
+		$('#place_of_supply').prop('disabled', true); 
+	});*/
 </script>
 
 <script src="{{URL::asset('app/js/salesinvoice.js')}}"></script>

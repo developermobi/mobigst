@@ -87,7 +87,7 @@
 							</td>
 							<td>
 								<a class='btn btn-sm btn-info' href="editSalesInvoice/{{encrypt($value->si_id)}}">Edit</a>
-								<a class='btn btn-sm btn-warning' onclick=deleteGstin(this); data-id='{{$value->si_id}}'>Cancel</a>
+								<a class='btn btn-sm btn-warning' onclick=cancelInvoice(this); data-id='{{$value->si_id}}'>Cancel</a>
 							</td>
 						</tr>
 						@endforeach
@@ -103,6 +103,6 @@
 	</div>
 </div>
 
-<script src="{{URL::asset('app/js/addbusiness.js')}}"></script>
+<script src="{{URL::asset('app/js/sales.js')}}"></script>
 
 @endsection

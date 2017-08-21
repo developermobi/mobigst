@@ -1,4 +1,4 @@
- <div class="copy-section wow fadeInDownBig animated animated" data-wow-delay="0.4s">
+ <div class="copy-section">
     <div class="container">
         <div class="social-icons">
             <a href="javascript:void();"><i class="icon"></i></a>

@@ -163,7 +163,7 @@ function updateCustomer(){
 					confirmButtonText: "OK",
 					width:'400px',
 				}).then(function () {
-					window.location.href = SERVER_NAME+"/items";
+					window.location.href = SERVER_NAME+"/business";
 				});
 			}else{
 				swal({
@@ -231,7 +231,7 @@ function deleteContact(obj) {
                 $(".bodyLoaderWithOverlay").hide();
             }
         });
-    })
+    });
 }
 
 function requestInfo(obj) {
@@ -283,6 +283,6 @@ function requestInfo(obj) {
                //$("#requestButton").prop('disabled', true).text('Requested.');
             }
         });
-    })
+    });
 
 }

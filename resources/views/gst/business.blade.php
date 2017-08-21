@@ -21,7 +21,7 @@
 	<div class="container" style="padding-top: 80px;">
 		<div class="about-grids">
 			<div class="about-grid1 wow fadeInLeft animated animated" data-wow-delay="0.4s">
-				<div class="latest-top"> 
+				<div class="latest-top">
 					<div class="row" style="padding-bottom: 20px;">
 						<div class="col-md-12">
 							<a href="importcontact"><button class="btn btn-default">Import Contacts</button></a>
@@ -36,7 +36,7 @@
 							<center>
 								<h2 style="padding: 10px;">
 									<a href="#" data-toggle="modal" data-target="#addBusinessModal">
-										<span style="color: #fff;"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add you Business</span>
+										<span style="color: #fff;"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add your Business</span>
 									</a>
 								</h2>
 							</center>
@@ -132,7 +132,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default btn-info" id="addBusinessButton">Add</button>
-					<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-default pull-left" id="cancelBusinessButton">Cancel</button>
 				</div>
 			</form>
 		</div>
@@ -169,7 +169,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default btn-success" id="addGstinButton">Add</button>
-				<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-default pull-left" id="cancelGstinButton">Cancel</button>
 			</div>
 		</div>
 	</div>

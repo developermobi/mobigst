@@ -71,9 +71,9 @@
 					<input type="password" name="password" id="password" placeholder="Password" required>
 					<input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
 					<p style="margin-bottom: 10px;">
-						By creating an account, you hereby agree to follow <a href="javascript:void();">these terms and conditions.</a>
+						By creating an account, you hereby agree to follow these <a href="javascript:void();"> terms and conditions.</a>
 					</p>
-					<button type="submit" id="register" class="btn btn-block btn-info">Join Now</button>
+					<button type="button" id="register" class="btn btn-block btn-info">Join Now</button>
 				</form>
 				<h4>Already have an account ? <a href="login">Login</a></h4>
 			</div>

@@ -57,21 +57,6 @@
 	</div>
 </div>
 
-
-<!-- <div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<form enctype="multipart/form-data"  method="post" action="/importfile">
-				<div class="form-group">
-					<label for="excel_file">File input</label>
-					<input type="file" id="excel_file" name="file">
-				</div>
-				<button type="submit" class="btn btn-default">Submit</button>
-			</form>
-		</div>
-	</div>
-</div> -->
-
 <script src="{{URL::asset('app/js/addcustomer.js')}}"></script>
 
 @endsection

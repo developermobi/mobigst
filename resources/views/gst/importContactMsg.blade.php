@@ -29,7 +29,7 @@
 							{{$data['numbers']}} contacts added successfully. 
 							<a href="importcontact">
 								<button class="btn btn-primary" type="button">Click Here</button>
-							</a>go backimport page.
+							</a> to go back to import page.
 						</span>
 						@else
 						<span style="font-size: 30px; color: #f12626;">

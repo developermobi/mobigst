@@ -27,7 +27,10 @@ $(function(){
 		if(place_of_supply == ''){
 			alert('Please select place of supply first');
 			$(".item_name").val('');
-			//$(".item_name").prop('disabled', true);
+		}else{
+			$('#place_of_supply').css('pointer-events','none');
+			$('#tddd').css('pointer-events','none');
+			$('#contact_gstin').css('pointer-events','none');
 		}
 	});
 
@@ -41,6 +44,7 @@ $(function(){
 		}
 
 		var customer_state = $("#customer_state").val();
+
 		if(place_of_supply == customer_state){
 			$(".cgst_percentage").val('0');
 			$(".cgst_percentage").prop('disabled', false);
@@ -125,6 +129,10 @@ $(function(){
 		saveSalesInvoice();
 	});
 
+	$('#update_invoice').click(function(){
+		updateSalesInvoice();
+	});
+
 });
 
 
@@ -144,14 +152,15 @@ function getContact(business_id){
 		beforeSend:function(){
 		},
 		success:function(response){
+			var contact_name_hidden = $('#contact_name_hidden').val();
 			var data = response['data'];
-			var option = "<option value='' selected></option>";
+			var option = "";
 			if(data.length > 0){
 				$.each(data, function(i, item) {
 					option += "<option value='"+data[i]['contact_name']+"' data-attr='"+data[i]['contact_id']+"'>"+data[i]['contact_name']+"</option>";
 				});
 			}
-			$(".contact_name").html('');
+			//$(".contact_name").html('');
 			$(".contact_name").append(option);
 		},
 		complete:function(){
@@ -184,7 +193,7 @@ function getStates(){
 					option += "<option value='"+data[i]['state_name']+"'>"+data[i]['state_name']+"</option>";
 				});
 			}
-			$(".place_of_supply").html('');
+			//$(".place_of_supply").html('');
 			$(".place_of_supply").append(option);
 		},
 		complete:function(){
@@ -216,20 +225,44 @@ function getContactInfo(obj){
 				$("#bill_country").val(response.data[0]['country']);
 				$("#contact_gstin").val(response.data[0]['gstin_no']);
 				$("#place_of_supply").val(response.data[0]['state']);
-				$("#customer_state").val(response.data[0]['state']);
+				//$("#customer_state").val(response.data[0]['state']);
 
-				$(".cgst_percentage").val('0');
-				$(".cgst_percentage").prop('disabled', false);
-				$(".cgst_amount").val('0');
-				$(".cgst_amount").prop('disabled', false);
-				$(".sgst_percentage").val('0');
-				$(".sgst_percentage").prop('disabled', false);
-				$(".sgst_amount").val('0');
-				$(".sgst_amount").prop('disabled', false);
-				$(".igst_percentage").val('0');
-				$(".igst_percentage").prop('disabled', true);
-				$(".igst_amount").val('0');
-				$(".igst_amount").prop('disabled', true);
+				var place_of_supply = $("#place_of_supply").val();
+				/*if(place_of_supply != ''){
+					$(".item_name").prop('disabled', false);
+				}else{
+					alert('Please select place of supply first');
+					$(".item_name").prop('disabled', true);
+				}*/
+
+				var customer_state = $("#customer_state").val();
+				if(place_of_supply == customer_state){
+					$(".cgst_percentage").val('0');
+					$(".cgst_percentage").prop('disabled', false);
+					$(".cgst_amount").val('0');
+					$(".cgst_amount").prop('disabled', false);
+					$(".sgst_percentage").val('0');
+					$(".sgst_percentage").prop('disabled', false);
+					$(".sgst_amount").val('0');
+					$(".sgst_amount").prop('disabled', false);
+					$(".igst_percentage").val('0');
+					$(".igst_percentage").prop('disabled', true);
+					$(".igst_amount").val('0');
+					$(".igst_amount").prop('disabled', true);
+				}else{
+					$(".cgst_percentage").val('0');
+					$(".cgst_percentage").prop('disabled', true);
+					$(".cgst_amount").val('0');
+					$(".cgst_amount").prop('disabled', true);
+					$(".sgst_percentage").val('0');
+					$(".sgst_percentage").prop('disabled', true);
+					$(".sgst_amount").val('0');
+					$(".sgst_amount").prop('disabled', true);
+					$(".igst_percentage").val('0');
+					$(".igst_percentage").prop('disabled', false);
+					$(".igst_amount").val('0');
+					$(".igst_amount").prop('disabled', false);
+				}
 			}
 		},
 		complete:function(){
@@ -464,12 +497,6 @@ function calculateCost(obj){
 
 
 
-function deleteRow(obj){
-	calculateTotal(obj);
-}
-
-
-
 function calculateTotal(obj){
 	var rate_sum = 0;
 	$(".rate").each(function(){
@@ -551,12 +578,10 @@ function saveSalesInvoice(){
 			}
 		},
 		complete:function(){
-			$("#save_invoice").prop('disabled', false).text('Save');
+			$("#save_invoice").prop('disabled', false).text('Save Invoice');
 		}
 	});
 }
-
-
 
 
 
@@ -609,10 +634,10 @@ function convert_number(number){
 	} 
 
 	var ones = Array("", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX","SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN","FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN","NINETEEN"); 
-	var tens = Array("", "", "TWENTY", "THIRTY", "FOURTY", "FIFTY", "SIXTY","SEVENTY", "EIGHTY", "NINETY"); 
+	var tens = Array("", "", "TWENTY", "THIRTY", "FOURTY", "FIFTY", "SIXTY","SEVENTY", "EIGHTY", "NINETY");
 
 	if (tn>0 || one>0) { 
-		if (!(res=="")){ 
+		if ((res!="")){ 
 			res += " AND "; 
 		} 
 		if (tn < 2) { 
@@ -631,3 +656,79 @@ function convert_number(number){
 }
 
 /*NUMBER TO WORDS*/
+
+
+
+function deleteInvoiceDetail(id_no,obj){
+	var id = id_no;
+	$.ajax({
+		"async": true,
+		"crossDomain": true,
+		"url": SERVER_NAME+"/api/deleteInvoiceDetail/"+id,
+		"method": "POST",
+		"headers": {
+			"cache-control": "no-cache",
+			"postman-token": "5d6d42d9-9cdb-e834-6366-d217b8e77f59"
+		},
+		"processData": false,
+		"dataType":"JSON",
+		beforeSend:function(){
+			$(".bodyLoaderWithOverlay").show();
+		},
+		success:function(response){
+			console.log(response);
+		},
+		complete:function(){
+			$(".bodyLoaderWithOverlay").hide();
+		}
+	});
+}
+
+
+
+function updateSalesInvoice(){
+
+	var data = JSON.stringify($("#invoiceForm").serializeFormJSON());
+	var si_id = $("#si_id").val();
+	
+	$.ajax({
+		"async": true,
+		"crossDomain": true,
+		"url": SERVER_NAME+"/api/updateSalesInvoice/"+si_id,
+		type:"POST",
+		"headers": {
+			"content-type": "application/json",
+			"cache-control": "no-cache",
+			"postman-token": "5d6d42d9-9cdb-e834-6366-d217b8e77f59"
+		},
+		"processData": false,
+		"data":data,
+		"dataType":"JSON",
+		beforeSend:function(){
+			$("#update_invoice").prop('disabled', true).text('Please Wait...');
+		},
+		success:function(response){
+			if(response.code == 201){
+				swal({
+					title: "Success !",
+					text: response.message,
+					type: "success",
+					confirmButtonText: "OK",
+					width:'400px',
+				}).then(function () {
+					window.location.reload();
+				});
+			}else{
+				swal({
+					title: "Failed!",
+					text: response.message,
+					type: "error",
+					confirmButtonText: "Close",
+				});
+			}
+		},
+		complete:function(){
+			$("#update_invoice").prop('disabled', false).text('Save');
+		}
+	});
+}

@@ -146,7 +146,6 @@ function registration(){
 					width:'400px',
 				}).then(function () {
 					window.location.href = "/login";
-					$('#signupForm')[0].reset();
 				});
 			}else{
 				swal({

@@ -283,7 +283,7 @@ class Gst extends Model{
 
 
 	public static function addContactFromCSV($data){
-        $insertedData = DB::table('contact')->insert($data);
+		$insertedData = DB::table('contact')->insert($data);
 		return $insertedData;
 	}
 
@@ -399,7 +399,7 @@ class Gst extends Model{
 
 
 	public static function addItemFromCSV($data){
-        $insertedData = DB::table('item')->insert($data);
+		$insertedData = DB::table('item')->insert($data);
 		return $insertedData;
 	}
 
@@ -469,6 +469,36 @@ class Gst extends Model{
 		->select('state_name')
 		->get();
 		return $states;
+	}
+
+
+
+	public static function getStateInfo($state_code){
+
+		$stateInfo = DB::table('states')
+		->where('state_code',$state_code)
+		->get();
+		return $stateInfo;
+	}
+
+
+
+	public static function checkGstin($gstin){
+		if (!preg_match('/^([0][1-9]|[1-2][0-9]|[3][0-7])([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/',$gstin)){
+			return 0;
+		}else{
+			return 1;
+		}
+	}
+
+
+
+	public static function checkPin($pin){
+		if (!preg_match('/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/',$pin)){
+			return 0;
+		}else{
+			return 1;
+		}
 	}
 
 

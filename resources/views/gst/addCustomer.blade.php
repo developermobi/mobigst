@@ -84,8 +84,8 @@
 						<label for="add">Address:</label>
 						<textarea class="form-control" rows="5"  placeholder="Enter Address" name="address"></textarea>
 					</div>
-					<button type="button" class="btn btn-danger">Back</button>
-					<button type="button" class="btn btn-default">Cancel</button>
+					<button type="button" onclick="history.back();" class="btn btn-danger">Back</button>
+					<!-- <button type="button" class="btn btn-default">Cancel</button> -->
 					<button type="button" class="btn btn-success" id="addCustomer">Save</button>
 				</form>
 			</div>

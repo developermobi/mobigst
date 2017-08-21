@@ -76,8 +76,8 @@
 						<label for="note">Item Notes:</label>
 						<textarea class="form-control" rows="5"  placeholder="Enter Item Notes" name="item_notes"></textarea>
 					</div>
-					<button type="submit" class="btn btn-danger">Back</button>
-					<button type="submit" class="btn btn-default">Cancel</button>
+					<button type="submit" onclick="history.back();" class="btn btn-danger">Back</button>
+					<!-- <button type="submit" class="btn btn-default">Cancel</button> -->
 					<button type="submit" class="btn btn-success" id="addItem">Save</button>
 				</form>
 			</div>
