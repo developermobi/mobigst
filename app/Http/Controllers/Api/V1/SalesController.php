@@ -340,6 +340,11 @@ class SalesController extends Controller{
 		if (sizeof($getData) > 0) {
 			$getInvoiceDetail = Sales::getInvoiceDetail($getData[0]->invoice_no);
 			$getBusinessByGstin = Sales::getBusinessByGstin($getData[0]->gstin_id);
+			$getGstinInfo = Sales::getGstinInfo($getData[0]->gstin_id);
+			if(sizeof($getGstinInfo) > 0){
+				$returnResponse['state_code'] = $getGstinInfo[0]->state_code;
+				$returnResponse['state_name'] = $getGstinInfo[0]->state_name;
+			}
 
 			$data = array();
 			$data['invoice_data'] = $getData;
@@ -488,6 +493,34 @@ class SalesController extends Controller{
 			return $returnResponse;
 		}
 		return $returnResponse;
+	}
+
+
+
+	public function cdnote($id){
+		$gstin_id = decrypt($id);
+
+		$data = array();
+		$getBusinessByGstin = Sales::getBusinessByGstin($gstin_id);
+		$getSalesInvoiceCount = Sales::getSalesInvoiceCount($gstin_id);
+		$getGstinInfo = Sales::getGstinInfo($gstin_id);
+
+		if(sizeof($getSalesInvoiceCount) > 0){
+			$data['invoice_no'] = "INV".($getSalesInvoiceCount[0]->count + 1);
+		}else{
+			$data['invoice_no'] = "INV1";
+		}
+
+		if(sizeof($getBusinessByGstin) > 0){
+			$data['gstin_id'] = $gstin_id;
+			$data['business_id'] = $getBusinessByGstin[0]->business_id;
+		}
+
+		if(sizeof($getGstinInfo) > 0){
+			$data['state_code'] = $getGstinInfo[0]->state_code;
+			$data['state_name'] = $getGstinInfo[0]->state_name;
+		}
+		return view('sales.cdnote')->with('data', $data);
 	}
 
 

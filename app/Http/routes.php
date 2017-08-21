@@ -239,6 +239,10 @@ Route::get('sales/editSalesInvoice/{id}', [
 	'as' => 'sales/editSalesInvoice/{id}', 'uses' => 'Api\V1\SalesController@editSalesInvoice'
 	]);
 
+Route::get('cdnote/{id}', [
+	'as' => 'cdnote/{id}', 'uses' => 'Api\V1\SalesController@cdnote'
+	]);
+
 $api->version('v1', function ($api) {
 	$api->get('getContact/{business_id}', 'App\Http\Controllers\Api\V1\SalesController@getContact');
 });

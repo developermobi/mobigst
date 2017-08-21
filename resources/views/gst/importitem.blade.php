@@ -51,7 +51,7 @@
 							<input type="file" id="file-input" name="item_csv" required>
 						</div>
 					</div>
-					<button type="submit" class="btn btn-info">Submit</button>
+					<button type="submit" class="btn btn-info" id="import_file">Submit</button>
 				</form>
 			</div>
 			<div class="clearfix"></div>

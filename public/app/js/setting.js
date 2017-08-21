@@ -4,6 +4,10 @@ $(function(){
 		window.location.href = SERVER_NAME;
 	}
 
+	jQuery.validator.addMethod("pan", function(value, element) {
+		return this.optional( element ) || /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test( value );
+	}, 'Please enter a valid pan number.');
+
 	$("#updateBusinessForm").validate({
 		rules: {    
 			name:{
@@ -11,6 +15,7 @@ $(function(){
 			},
 			pan:{
 				required: true,
+				pan:true,
 			},
 		},
 		messages: {    
@@ -73,12 +78,15 @@ $(function(){
 		});
 	});
 
-
+	jQuery.validator.addMethod("gstin", function(value, element) {
+		return this.optional( element ) || /^([0][1-9]|[1-2][0-9]|[3][0-7])([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/.test( value );
+	}, 'Please enter a valid gstin number.');
 
 	$("#updateGstinForm").validate({
 		rules: {    
 			gstin_no:{
 				required: true,
+				gstin:true,
 			},
 			display_name:{
 				required: true,

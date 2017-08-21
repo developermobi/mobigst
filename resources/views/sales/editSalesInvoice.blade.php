@@ -77,7 +77,7 @@
 								</thead>
 								<tbody>
 									<tr>
-										<td>
+										<td id="tddd">
 											<input type="hidden" name="" id="contact_name_hidden" value="{{$data['data']['invoice_data'][0]->contact_name}}">
 											<select class="form-control contact_name" name="contact_name" onchange="getContactInfo(this);">
 												<option value="{{$data['data']['invoice_data'][0]->contact_name}}">{{$data['data']['invoice_data'][0]->contact_name}}</option>
@@ -98,7 +98,7 @@
 											<option value="{{$data['data']['invoice_data'][0]->place_of_supply}}">{{$data['data']['invoice_data'][0]->place_of_supply}}</option>
 										</select>
 									</td>
-									<input type="hidden" id="customer_state" value="{{$data['data']['invoice_data'][0]->place_of_supply}}">
+									<input type="hidden" id="customer_state" value="{{$data['state_name']}}">
 								</tr>
 							</table>
 							<p>
@@ -423,6 +423,29 @@
 	$(document).ready(function() {
 		$(".item_name").select2();
 	});
+
+	var place_of_supply = $("#place_of_supply").val();
+	var customer_state = $("#customer_state").val();
+
+	if(place_of_supply != customer_state){
+		$(".cgst_percentage").prop('disabled', true);
+		$(".cgst_amount").prop('disabled', true);
+		$(".sgst_percentage").prop('disabled', true);
+		$(".sgst_amount").prop('disabled', true);
+		$(".igst_percentage").prop('disabled', false);
+		$(".igst_amount").prop('disabled', false);
+	}else{
+		$(".cgst_percentage").prop('disabled', false);
+		$(".cgst_amount").prop('disabled', false);
+		$(".sgst_percentage").prop('disabled', false);
+		$(".sgst_amount").prop('disabled', false);
+		$(".igst_percentage").prop('disabled', true);
+		$(".igst_amount").prop('disabled', true);
+	}
+
+	$('#place_of_supply').css('pointer-events','none');
+	$('#tddd').css('pointer-events','none');
+	$('#contact_gstin').css('pointer-events','none');
 </script>
 
 <script src="{{URL::asset('app/js/salesinvoice.js')}}"></script>

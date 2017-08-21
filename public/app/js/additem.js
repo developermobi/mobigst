@@ -23,17 +23,17 @@ $(function(){
 			business_id:{
 				required: true,
 			},
-			pan_no:{
+			item_description:{
 				required: true,
 			},
-			gstin_no:{
+			item_sale_price:{
 				required: true,
 			},
 		},
 		messages: {    
 			business_id:"Please select business.",
-			pan_no:"Please enter pan no.",
-			gstin_no:"Please enter valid gstin no.",
+			item_description:"Please enter item description.",
+			item_sale_price:"Please enter item sale price.",
 		}
 	});
 
@@ -42,19 +42,32 @@ $(function(){
 			business_id:{
 				required: true,
 			},
-			pan_no:{
+			item_description:{
 				required: true,
 			},
-			gstin_no:{
+			item_sale_price:{
 				required: true,
 			},
 		},
 		messages: {    
 			business_id:"Please select business.",
-			pan_no:"Please enter pan no.",
-			gstin_no:"Please enter valid gstin no.",
+			item_description:"Please enter item description.",
+			item_sale_price:"Please enter item sale price.",
 		}
 	});
+
+	$('#import_file').click(function(){
+		var import_file = $("#file-input").val();
+		if(import_file == ''){
+			swal({
+				text: "Please select csv file to upload.",
+				type: "error",
+				confirmButtonText: "Close",
+			});
+			return false;
+		}
+	});
+	
 });
 
 

@@ -109,7 +109,7 @@ $(function(){
 			$("#tt_cess_amount").prop('disabled', false);
 			$("#tt_total").val('0');
 			$("#tt_total").prop('disabled', false);
-		} else {
+		}else{
 			$("#tt_taxable_value").val('0');
 			$("#tt_taxable_value").prop('disabled', true);
 			$("#tt_cgst_amount").val('0');
@@ -228,12 +228,6 @@ function getContactInfo(obj){
 				//$("#customer_state").val(response.data[0]['state']);
 
 				var place_of_supply = $("#place_of_supply").val();
-				/*if(place_of_supply != ''){
-					$(".item_name").prop('disabled', false);
-				}else{
-					alert('Please select place of supply first');
-					$(".item_name").prop('disabled', true);
-				}*/
 
 				var customer_state = $("#customer_state").val();
 				if(place_of_supply == customer_state){

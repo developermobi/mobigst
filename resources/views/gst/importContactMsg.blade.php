@@ -33,7 +33,10 @@
 						</span>
 						@else
 						<span style="font-size: 30px; color: #f12626;">
-							{{$data['message']}}
+							{{$data['message']}}<br>
+							<a href="importcontact">
+								<button class="btn btn-primary" type="button">Click Here</button>
+							</a> to go back to import page.
 						</span>
 						@endif
 					</center>
@@ -47,7 +50,7 @@
 <script type="text/javascript">
 	/*var delay = 2000; 
 	setTimeout(function(){ window.location = SERVER_NAME+"/importcontact"; }, delay);*/
-	function disableF5(e) { if ((e.which || e.keyCode) == 116 || (e.which || e.keyCode) == 82) e.preventDefault(); };
+	function disableF5(e) { if ((e.which || e.keyCode) == 116 || (e.which || e.keyCode) == 82) e.preventDefault(); }
 	$(document).ready(function() {
 		$("body").on("contextmenu",function(){
 			return false;

@@ -328,6 +328,8 @@ class GstController extends Controller{
 				$gstin_data['business_id'] = $addBusiness;
 				$gstin_data['gstin_no'] = $input['gstin_no'];
 				$gstin_data['display_name'] = $input['display_name'];
+				$gstin_data['state_code'] = $getStateInfo[0]->state_code;
+				$gstin_data['state_name'] = $getStateInfo[0]->state_name;
 
 				$addBusiness = Gst::addGstin($gstin_data);
 
